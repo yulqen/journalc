@@ -20,10 +20,10 @@ int main(int argc, char *argv[])
         perror("Error opening directory.");
     }
 
+    printf("Our markdown files: \n\n");
+
     while ((info_archive = readdir(journal_dir)) != 0)
     {
-        /* char *fn = info_archive->d_name; */
-        /* printf("File: %s\n", fn); */
         strcpy(fullpath, "/home/lemon/Documents/Notes/journal/home");
         strcat(fullpath, "/");
         strcat(fullpath, info_archive->d_name);
@@ -31,13 +31,18 @@ int main(int argc, char *argv[])
         {
             if (!S_ISDIR(file_stat.st_mode))
             {
-                printf("File: %s\n", fullpath);
+                int length = strlen(fullpath);
+                // get pointer three chars back from the end of the string
+                const char *ext = fullpath + length - 3;
+                if (strcmp(ext, ".md") == 0)
+                {
+                    printf("File: %s", fullpath);
+                    {
+                        printf(" |-> extension is %s\n", ext);
+                    }
+                }
             }
         }
-        /* if (!stat(fullpath, &file_stat)) */
-        /* { */
-        /*     printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-"); */
-        /* } */
     }
 
     return 0;
