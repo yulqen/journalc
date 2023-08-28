@@ -22,14 +22,22 @@ int main(int argc, char *argv[])
 
     while ((info_archive = readdir(journal_dir)) != 0)
     {
-        printf("File: %s\n", info_archive->d_name);
+        /* char *fn = info_archive->d_name; */
+        /* printf("File: %s\n", fn); */
         strcpy(fullpath, "/home/lemon/Documents/Notes/journal/home");
         strcat(fullpath, "/");
         strcat(fullpath, info_archive->d_name);
         if (!stat(fullpath, &file_stat))
         {
-            printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
+            if (!S_ISDIR(file_stat.st_mode))
+            {
+                printf("File: %s\n", fullpath);
+            }
         }
+        /* if (!stat(fullpath, &file_stat)) */
+        /* { */
+        /*     printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-"); */
+        /* } */
     }
 
     return 0;
