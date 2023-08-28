@@ -13,6 +13,33 @@ typedef struct {
 
 Options opts;
 
+int emplaceBack(JournalLine **lines, int *lineCount, const char *line,
+                const char *filename) {
+  JournalLine newLine;
+  newLine.line = strdup(line);
+  if (newLine.line == NULL) {
+    perror("Memory allocation error on adding line.");
+    return 0;
+  }
+
+  newLine.filename = strdup(filename);
+  if (newLine.filename == NULL) {
+    perror("Memory allocation error on adding filename.");
+    return 0;
+  }
+  *lines = realloc(*lines, (*lineCount + 1) * sizeof(JournalLine));
+  if (*lines == NULL) {
+    free(newLine.line);
+    free(newLine.filename);
+    perror("Memory allocation error.");
+    return 0;
+  }
+
+  (*lines)[*lineCount] = newLine;
+  (*lineCount)++;
+  return 1;
+}
+
 void parse_args(int argc, char *const *argv) {
   for (int i = 1; i < argc; i++) {
     char *argument = argv[i];
@@ -33,9 +60,18 @@ void parse_args(int argc, char *const *argv) {
 int main(int argc, char *argv[]) {
   parse_args(argc, argv);
   FILE *file = fopen("2023-08-25.md", "r");
+  if (file == NULL) {
+    perror("Error opening file.");
+    return 1;
+  }
 
   // Create a pointer to JournalLine - intended as the starting
   // point for dynamically allocated memory
+  // If you don't do that you could do
+  //  struct Line *lines = malloc(lineCount * sizeof(struct Line));
+  // below somewhere. But using malloc, we need the linecount so
+  // we would have to run through the file first, then reset
+  // in the file using seek to run through again to get the lines
   JournalLine *journal_lines = NULL;
   int linecount = 0;
   char buffer[2000];
@@ -45,34 +81,9 @@ int main(int argc, char *argv[]) {
   // we have allocated above - so we won't go beyond it
   while (fgets(buffer, sizeof(buffer), file)) {
     // Create a new struct
-    JournalLine newLine;
-
-    // The line member of the struct is assigned the memory
-    // address of a dynamically allocated string which
-    // duplicates the content of the buffer - this is the
-    // genius move here
-    newLine.line = strdup(buffer);
-    if (newLine.line == NULL) {
-      perror("Memory allocation error");
-      break;
+    if (!emplaceBack(&journal_lines, &linecount, buffer, "yonkers.txt")) {
+      break;  // we failed to add the line
     }
-
-    // memory is allocated for the journal_lines array using
-    // realloc. It increases the memory size to accommdate the
-    // new line.
-    // (linecount + 1) * sizeof(JournalLine) calculates the
-    // required memory size
-    journal_lines =
-        realloc(journal_lines, (linecount + 1) * sizeof(JournalLine));
-    if (journal_lines == NULL) {
-      perror("Memory allocation error");
-      free(newLine.line);
-      break;
-    }
-    // the newline struct is added to the journal_lines array
-    // and linecount is incremented
-    journal_lines[linecount] = newLine;
-    linecount++;
   }
   fclose(file);
 
@@ -84,6 +95,7 @@ int main(int argc, char *argv[]) {
   // free memory for each journal_line's line using free
   for (int i = 0; i < linecount; ++i) {
     free(journal_lines[i].line);
+    free(journal_lines[i].filename);
   }
   // free memory allocated for the array too
   free(journal_lines);
