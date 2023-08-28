@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-char *todayDate()
+char *today_date_basic_iso_format()
 {
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -16,9 +16,9 @@ char *todayDate()
     return out;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
-    char *today = todayDate();
+    char *today = today_date_basic_iso_format();
     if (today != NULL)
     {
         printf("Date: %s", today);
