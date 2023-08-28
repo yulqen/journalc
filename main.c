@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct
+{
   char *search_term;
 } Options;
 
-typedef struct {
+typedef struct
+{
   char *line;
   char *filename;
 } JournalLine;
@@ -14,21 +16,25 @@ typedef struct {
 Options opts;
 
 int emplaceBack(JournalLine **lines, int *lineCount, const char *line,
-                const char *filename) {
+                const char *filename)
+{
   JournalLine newLine;
   newLine.line = strdup(line);
-  if (newLine.line == NULL) {
+  if (newLine.line == NULL)
+  {
     perror("Memory allocation error on adding line.");
     return 0;
   }
 
   newLine.filename = strdup(filename);
-  if (newLine.filename == NULL) {
+  if (newLine.filename == NULL)
+  {
     perror("Memory allocation error on adding filename.");
     return 0;
   }
   *lines = realloc(*lines, (*lineCount + 1) * sizeof(JournalLine));
-  if (*lines == NULL) {
+  if (*lines == NULL)
+  {
     free(newLine.line);
     free(newLine.filename);
     perror("Memory allocation error.");
@@ -40,15 +46,19 @@ int emplaceBack(JournalLine **lines, int *lineCount, const char *line,
   return 1;
 }
 
-void parse_args(int argc, char *const *argv) {
-  for (int i = 1; i < argc; i++) {
+void parse_args(int argc, char *const *argv)
+{
+  for (int i = 1; i < argc; i++)
+  {
     char *argument = argv[i];
     // Handling the -g case, which is the search term
     {
-      if (i < argc - 1) {  // protection against segmentation fault
+      if (i < argc - 1)
+      {  // protection against segmentation fault
         printf("Searching for (-g): %s\n", argv[i + 1]);
         opts.search_term = argv[i + 1];
-      } else {
+      } else
+      {
         printf("-g flag requires one argument\n");
         return;
       }
@@ -57,10 +67,12 @@ void parse_args(int argc, char *const *argv) {
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   parse_args(argc, argv);
   FILE *file = fopen("2023-08-25.md", "r");
-  if (file == NULL) {
+  if (file == NULL)
+  {
     perror("Error opening file.");
     return 1;
   }
@@ -79,9 +91,11 @@ int main(int argc, char *argv[]) {
   // Read each line from the file - the max chars read
   // from the line in the file is the size of the buffer
   // we have allocated above - so we won't go beyond it
-  while (fgets(buffer, sizeof(buffer), file)) {
+  while (fgets(buffer, sizeof(buffer), file))
+  {
     // Create a new struct
-    if (!emplaceBack(&journal_lines, &linecount, buffer, "yonkers.txt")) {
+    if (!emplaceBack(&journal_lines, &linecount, buffer, "yonkers.txt"))
+    {
       break;  // we failed to add the line
     }
   }
@@ -93,7 +107,8 @@ int main(int argc, char *argv[]) {
   printf("Third line: %s", journal_lines[2].line);
 
   // free memory for each journal_line's line using free
-  for (int i = 0; i < linecount; ++i) {
+  for (int i = 0; i < linecount; ++i)
+  {
     free(journal_lines[i].line);
     free(journal_lines[i].filename);
   }
