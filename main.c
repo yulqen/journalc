@@ -26,8 +26,7 @@ char *today_date_basic_iso_format()
     char *out = (char *)malloc(11);
     if (out != NULL)
     {
-        sprintf(out, "%d-%02d-%02d\n", tm.tm_year + 1900, tm.tm_mon + 1,
-                tm.tm_mday);
+        sprintf(out, "%d-%02d-%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
     }
     return out;
 }
@@ -43,8 +42,8 @@ char *today_date_basic_iso_format()
      }
  *
  * */
-int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount,
-                                       const char *line, const char *filename)
+int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, const char *line,
+                                       const char *filename)
 {
     JournalLine newLine;
     newLine.line = strdup(line);
@@ -124,8 +123,7 @@ int main(int argc, char *argv[])
     while (fgets(buffer, sizeof(buffer), file))
     {
         // Create a new struct
-        if (!journal_lines_insert_line_filename(&journal_lines, &linecount,
-                                                buffer, "yonkers.txt"))
+        if (!journal_lines_insert_line_filename(&journal_lines, &linecount, buffer, "yonkers.txt"))
         {
             break;  // we failed to add the line
         }
