@@ -98,6 +98,7 @@ void parse_args(int argc, char *const *argv)
 
 int main(int argc, char *argv[])
 {
+    printf("Doing this on %s\n", today_date_basic_iso_format());
     parse_args(argc, argv);
     FILE *file = fopen("2023-08-25.md", "r");
     if (file == NULL)
