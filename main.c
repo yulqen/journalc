@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
+/* Storage for program options */
 typedef struct
 {
     char *search_term;
 } Options;
 
+/* Storage for text extracted from a line in a target file */
 typedef struct
 {
     char *line;
@@ -15,8 +18,33 @@ typedef struct
 
 Options opts;
 
-int emplaceBack(JournalLine **lines, int *lineCount, const char *line,
-                const char *filename)
+/* Returns today's date in ISO format YYYY-MM-DD */
+char *today_date_basic_iso_format()
+{
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char *out = (char *)malloc(11);
+    if (out != NULL)
+    {
+        sprintf(out, "%d-%02d-%02d\n", tm.tm_year + 1900, tm.tm_mon + 1,
+                tm.tm_mday);
+    }
+    return out;
+}
+
+/*
+ * This puts a line and a filename into a JournalLine and stores it in the lines
+ array.
+ * Initialise the array with something like:
+ *
+     if (!emplaceBack(&journal_lines, &linecount, buffer, "yonkers.txt"))
+     {
+         break;  // we failed to add the line
+     }
+ *
+ * */
+int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount,
+                                       const char *line, const char *filename)
 {
     JournalLine newLine;
     newLine.line = strdup(line);
@@ -46,6 +74,7 @@ int emplaceBack(JournalLine **lines, int *lineCount, const char *line,
     return 1;
 }
 
+/* Parses the command line arguments */
 void parse_args(int argc, char *const *argv)
 {
     for (int i = 1; i < argc; i++)
@@ -94,7 +123,8 @@ int main(int argc, char *argv[])
     while (fgets(buffer, sizeof(buffer), file))
     {
         // Create a new struct
-        if (!emplaceBack(&journal_lines, &linecount, buffer, "yonkers.txt"))
+        if (!journal_lines_insert_line_filename(&journal_lines, &linecount,
+                                                buffer, "yonkers.txt"))
         {
             break;  // we failed to add the line
         }
