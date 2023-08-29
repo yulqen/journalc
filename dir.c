@@ -58,15 +58,15 @@ char **get_relevant_files(int *linesize)
     {
         perror("Error opening directory.");
     }
-    // A new struct for directory entries
-    struct dirent *dir_information2;
+    // Reinitialise the struct for the next round of entries
+    dir_information = NULL;
 
     int idx = 0;
-    while ((dir_information2 = readdir(journal_dir)) != 0)
+    while ((dir_information = readdir(journal_dir)) != 0)
     {
         strcpy(fullpath, JOURNAL_DIR_PATH);
         strcat(fullpath, "/");
-        strcat(fullpath, dir_information2->d_name);
+        strcat(fullpath, dir_information->d_name);
         if (!stat(fullpath, &file_stat))
         {
             if (!S_ISDIR(file_stat.st_mode))
@@ -97,7 +97,7 @@ char **get_relevant_files(int *linesize)
 
 int main(int argc, char *argv[])
 {
-    int s;
+    int s; /* we use this to track the number of lines so we can free them */
     char **toss = get_relevant_files(&s);
     printf("There seemingly were %d lines.\n", s);
     printf("%s\n", toss[0]);
