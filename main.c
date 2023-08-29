@@ -139,14 +139,14 @@ int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, cons
     if (newLine.line == NULL)
     {
         perror("Memory allocation error on adding line.");
-        return 0;
+        return 1;
     }
 
     newLine.filename = strdup(filename);
     if (newLine.filename == NULL)
     {
         perror("Memory allocation error on adding filename.");
-        return 0;
+        return 1;
     }
     *lines = realloc(*lines, (*lineCount + 1) * sizeof(JournalLine));
     if (*lines == NULL)
@@ -154,12 +154,12 @@ int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, cons
         free(newLine.line);
         free(newLine.filename);
         perror("Memory allocation error.");
-        return 0;
+        return 1;
     }
 
     (*lines)[*lineCount] = newLine;
     (*lineCount)++;
-    return 1;
+    return 0;
 }
 
 /* Parses the command line arguments */
@@ -184,8 +184,14 @@ void parse_args(int argc, char *const *argv)
 
 int main(int argc, char *argv[])
 {
-    printf("Doing this on %s\n", today_date_basic_iso_format());
+    char *date = today_date_basic_iso_format();
+    printf("Doing this on %s\n", date);
+    free(date);  // Not sure if you have to do this but it reduces warnings in valgrind
     parse_args(argc, argv);
+
+    /* Move all this code into a function and call it on each item from the array of filenames
+     * gathered below
+     */
     FILE *file = fopen("2023-08-25.md", "r");
     if (file == NULL)
     {
@@ -220,8 +226,8 @@ int main(int argc, char *argv[])
     // access journal_lines using journal_lines[index];
     printf("These lines are from the struct:\n\n");
     printf("%s", journal_lines[0].line);
-    printf("%s", journal_lines[1].line);
-    printf("%s", journal_lines[2].line);
+    // printf("%s", journal_lines[1].line);
+    /* printf("%s", journal_lines[2].line); */
 
     // free memory for each journal_line's line using free
     for (int i = 0; i < linecount; ++i)
