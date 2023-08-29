@@ -34,19 +34,12 @@ int main(int argc, char *argv[])
                 int length = strlen(fullpath);
                 // get pointer three chars back from the end of the string
                 const char *m_ext = fullpath + length - 3;
-                if (strcmp(m_ext, ".md") == 0)
+                const char *t_ext = fullpath + length - 4;
+                if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                 {
                     printf("File: %s", fullpath);
                     {
                         printf(" |-> extension is %s\n", m_ext);
-                    }
-                }
-                const char *t_ext = fullpath + length - 4;
-                if (strcmp(t_ext, ".txt") == 0)
-                {
-                    printf("File: %s", fullpath);
-                    {
-                        printf(" |-> extension is %s\n", t_ext);
                     }
                 }
             }
