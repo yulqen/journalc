@@ -14,10 +14,8 @@ int main(int argc, char *argv[])
     //      - In doing so, it highlights the search term
     //  - Everything is formatted nicely
     parse_args(argc, argv);
-    JournalLine *jl = new_journalline("This is a new line", "toss.txt");
-    printf("jl line is %s\n", jl->line);
-    printf("jl filename is %s\n", jl->filename);
-    del_journalline(jl);
+    int *s = 0;
+    char **toss = get_relevant_files(s);
 
     return 0;
 }

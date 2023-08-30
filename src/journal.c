@@ -121,6 +121,9 @@ char **get_relevant_files(int *linesize)
                     char *new_path = malloc((strlen(fullpath) + 1) * sizeof(char));
                     strcpy(new_path, fullpath);
 
+                    // Mixing functionality
+                    get_line_from_file(new_path);
+
                     string_array[idx] = new_path;
                     idx++;
                 }
@@ -179,59 +182,47 @@ int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, cons
     return 0;
 }
 
-void get_line_from_file()
+void get_line_from_file(char *filepath)
 {
-    char *date = today_date_basic_iso_format();
-    printf("Doing this on %s\n", date);
-    free(date);  // Not sure if you have to do this but it reduces warnings in valgrind
-
-    /* Move all this code into a function and call it on each item from the array of filenames
-     * gathered below
-     */
-    FILE *file = fopen("2023-08-25.md", "r");
+    FILE *file = fopen(filepath, "r");
     if (file == NULL)
     {
         perror("Error opening file.");
     }
 
-    // Create a pointer to JournalLine - intended as the starting
-    // point for dynamically allocated memory
-    // If you don't do that you could do
-    //  struct Line *lines = malloc(lineCount * sizeof(struct Line));
-    // below somewhere. But using malloc, we need the linecount so
-    // we would have to run through the file first, then reset
-    // in the file using seek to run through again to get the lines
-    JournalLine *journal_lines = NULL;
+    JournalLine jlines[100];  // fuck dynamic memory!
+
     int linecount = 0;
     char buffer[2000];
 
     // Read each line from the file - the max chars read
     // from the line in the file is the size of the buffer
     // we have allocated above - so we won't go beyond it
-    while (fgets(buffer, sizeof(buffer), file))
+    int x = 0;
+    while (fgets(buffer, sizeof(buffer), file) != NULL)
     {
         // Create a new struct
-        if (!journal_lines_insert_line_filename(&journal_lines, &linecount, buffer, "yonkers.txt"))
-        {
-            break;  // we failed to add the line
-        }
+        jlines[x] = *new_journalline(buffer, filepath);
+        x++;
     }
     fclose(file);
 
     // access journal_lines using journal_lines[index];
-    printf("These lines are from the struct:\n\n");
-    printf("%s", journal_lines[0].line);
+    /* printf("These lines are from the struct:\n\n"); */
+    for (int i = 0; i < 200; ++i)
+    {
+        printf("%s\n", jlines[i].filename);
+        printf("%s\n\n", jlines[i].line);
+    }
     // printf("%s", journal_lines[1].line);
     /* printf("%s", journal_lines[2].line); */
 
     // free memory for each journal_line's line using free
     for (int i = 0; i < linecount; ++i)
     {
-        free(journal_lines[i].line);
-        free(journal_lines[i].filename);
+        free(jlines[i].line);
+        free(jlines[i].filename);
     }
-    // free memory allocated for the array too
-    free(journal_lines);
 }
 
 void get_all_relevant_files()

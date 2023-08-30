@@ -1,6 +1,6 @@
 #ifndef JOURNAL_H
 #define JOURNAL_H
-#define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/Archive"
+#define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/journal/home"
 
 /* Storage for program options */
 typedef struct
@@ -23,6 +23,6 @@ char **get_relevant_files(int *linesize);
 int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, const char *line,
                                        const char *filename);
 void get_all_relevant_files();
-void get_line_from_file();
+void get_line_from_file(char *filepath);
 
 #endif
