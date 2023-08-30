@@ -10,6 +10,46 @@
 
 Options opts;
 
+JournalLine new_journalline(char *line, char *filename)
+{
+    // Start with the outer layer
+    JournalLine *jl = malloc(sizeof(JournalLine));
+    if (jl == NULL)
+    {
+        perror("Could not create JournalLine object.");
+        exit(1);
+    }
+    // Then the data layer
+    jl->line = malloc(strlen(line) * sizeof(char));
+    jl->line = line;
+    if (jl->line == NULL)
+    {
+        free(jl);
+        perror("Could not create line member inside JournalLine.");
+        exit(1);
+    }
+    jl->filename = malloc(strlen(filename) * sizeof(char));
+    jl->filename = filename;
+    if (jl->filename == NULL)
+    {
+        free(jl);
+        perror("Could not create filename member inside JournalLine.");
+        exit(1);
+    }
+    // If both layers worked - return the JournalLine
+    return *jl;
+}
+
+void del_journalline(JournalLine *jl)
+{
+    if (jl != NULL)
+    {
+        free(jl->line);
+        free(jl->filename);
+        free(jl);
+    }
+}
+
 /* Parses the command line arguments */
 void parse_args(int argc, char *const *argv)
 {
