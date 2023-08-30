@@ -1,10 +1,12 @@
 #include "journal.h"
-#include "date.h"
+
 #include <dirent.h>
-#include <sys/stat.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+
+#include "date.h"
 
 Options opts;
 
@@ -148,8 +150,8 @@ int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, cons
     return 0;
 }
 
-void get_line_from_file() {
-
+void get_line_from_file()
+{
     char *date = today_date_basic_iso_format();
     printf("Doing this on %s\n", date);
     free(date);  // Not sure if you have to do this but it reduces warnings in valgrind
@@ -203,8 +205,8 @@ void get_line_from_file() {
     free(journal_lines);
 }
 
-void get_all_relevant_files() {
-
+void get_all_relevant_files()
+{
     /* This is the main code that calls get_relevant_files() */
     int s; /* we use this to track the number of lines so we can free them */
     char **toss = get_relevant_files(&s);
@@ -216,4 +218,3 @@ void get_all_relevant_files() {
     }
     free(toss);
 }
-
