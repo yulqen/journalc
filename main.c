@@ -32,6 +32,7 @@ char **get_relevant_files(int *linesize)
     if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
     {
         perror("Error opening directory.");
+        exit(1);
     }
 
     // First we have to iterate through the dir to count the entries
@@ -55,6 +56,7 @@ char **get_relevant_files(int *linesize)
     if ((closedir(journal_dir) != 0))
     {
         perror("Unable to close directory");
+        exit(1);
     }
 
     // Request enough memory for array
@@ -69,6 +71,7 @@ char **get_relevant_files(int *linesize)
     if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
     {
         perror("Error opening directory.");
+        exit(1);
     }
     // Reinitialise the struct for the next round of entries
     dir_information = NULL;
