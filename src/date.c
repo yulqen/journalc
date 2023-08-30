@@ -14,4 +14,3 @@ char *today_date_basic_iso_format()
     }
     return out;
 }
-
