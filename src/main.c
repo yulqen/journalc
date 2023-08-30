@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "journal.h"
+#include "date.h"
 
 /* Storage for program options */
 typedef struct
