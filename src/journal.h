@@ -1,6 +1,6 @@
 #ifndef JOURNAL_H
 #define JOURNAL_H
-#define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/journal/home"
+#define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/Archive"
 
 /* Storage for program options */
 typedef struct
