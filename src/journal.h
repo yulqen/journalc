@@ -15,7 +15,7 @@ typedef struct
     char *filename;
 } JournalLine;
 
-JournalLine new_journalline(char *line, char *filename);
+JournalLine *new_journalline(char *line, char *filename);
 void del_journalline(JournalLine *jl);
 
 void parse_args(int argc, char *const *argv);
