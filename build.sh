@@ -1,3 +1,3 @@
 #!/bin/sh
 
-clang -o build/journalc -I src/ src/date.c src/main.c src/journal.c
+clang -o build/journalc  -g -I src/ src/date.c src/main.c src/journal.c

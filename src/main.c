@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include "journal.h"
 
+#include "journal.h"
 
 int main(int argc, char *argv[])
 {
     parse_args(argc, argv);
-    get_line_from_file();
+    get_all_relevant_files();
 
     return 0;
 }

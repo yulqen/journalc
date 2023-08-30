@@ -35,8 +35,7 @@ char **get_relevant_files(int *linesize)
     DIR *journal_dir;
     struct dirent *dir_information;
     struct stat file_stat;
-    char fullpath[256];
-    int linecount = 0;
+    char *fullpath = malloc(2000 * sizeof(char *));
 
     if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
     {
@@ -46,46 +45,14 @@ char **get_relevant_files(int *linesize)
 
     // First we have to iterate through the dir to count the entries
     // we want....
-    while ((dir_information = readdir(journal_dir)) != 0)
-    {
-        strcpy(fullpath, JOURNAL_DIR_PATH);
-        strcat(fullpath, "/");
-        strcat(fullpath, dir_information->d_name);
-        if (!stat(fullpath, &file_stat))
-        {
-            if (!S_ISDIR(file_stat.st_mode))
-            {
-                linecount++;
-            }
-        }
-    }
-    // Exposing the linecount to the caller
-    *linesize = linecount;
-    // Make sure to close the directory stream
-    if ((closedir(journal_dir) != 0))
-    {
-        perror("Unable to close directory");
-        exit(1);
-    }
 
-    // Request enough memory for array
-    char **string_array = malloc(linecount * sizeof(char *));
-    for (int i = 0; i < linecount; ++i)
-    {
-        // 256 is arbitary here; it means we can only store 256 chars
-        string_array[i] = malloc(256 * sizeof(char));
-    }
+    int idx = 0; /* a counter */
 
-    // Now we open the directory again and create another stream
-    if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
-    {
-        perror("Error opening directory.");
-        exit(1);
-    }
-    // Reinitialise the struct for the next round of entries
-    dir_information = NULL;
+    // Request enough memory for array - let's start with 20 slots, we are going to increase it
+    // dynamically
+    int capacity = 20;
+    char **string_array = malloc(capacity * sizeof(char *));
 
-    int idx = 0;
     while ((dir_information = readdir(journal_dir)) != 0)
     {
         strcpy(fullpath, JOURNAL_DIR_PATH);
@@ -101,16 +68,28 @@ char **get_relevant_files(int *linesize)
                 const char *t_ext = fullpath + length - 4;
                 if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                 {
-                    /* printf("File: %s", fullpath); */
+                    // create memory to hold the filepath string
+                    if (idx == capacity)
                     {
-                        /* printf(" |-> extension is %s\n", m_ext); */
-                        strcpy(string_array[idx], fullpath);
-                        idx++;
+                        capacity = (int)(capacity * 1.5);
+                        printf("Expanding array to %d\n", capacity);
+                        string_array = realloc(string_array, capacity * sizeof(char *));
                     }
+
+                    // We have to create a new fullpath variable here before it gets
+                    // assigned to the array
+                    char *new_path = malloc(1 * sizeof(char *));
+                    new_path = fullpath;
+
+                    string_array[idx] = new_path;
+                    idx++;
                 }
             }
         }
     }
+    // Exposing the linecount to the caller
+    *linesize = idx;
+
     // Make sure to close the directory stream
     if ((closedir(journal_dir) != 0))
     {
@@ -208,13 +187,16 @@ void get_line_from_file()
 void get_all_relevant_files()
 {
     /* This is the main code that calls get_relevant_files() */
-    int s; /* we use this to track the number of lines so we can free them */
+    int s = 0; /* we use this to track the number of lines so we can free them */
     char **toss = get_relevant_files(&s);
     printf("There seemingly were %d lines.\n", s);
-    printf("%s\n", toss[0]);
     for (int i = 0; i < s; ++i)
     {
-        free(toss[i]);
+        printf("%s\n", toss[i]);
     }
-    free(toss);
+    /* for (int i = 0; i < s; ++i) */
+    /* { */
+    /*     free(toss[i]); */
+    /* } */
+    /* free(toss); */
 }
