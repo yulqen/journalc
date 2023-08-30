@@ -51,7 +51,7 @@ char **get_relevant_files(int *linesize)
     // Request enough memory for array - let's start with 20 slots, we are going to increase it
     // dynamically
     int capacity = 20;
-    char **string_array = malloc(capacity * sizeof(char *));
+    char **string_array = malloc(capacity * sizeof(char));
 
     while ((dir_information = readdir(journal_dir)) != 0)
     {
@@ -73,13 +73,21 @@ char **get_relevant_files(int *linesize)
                     {
                         capacity = (int)(capacity * 1.5);
                         printf("Expanding array to %d\n", capacity);
-                        string_array = realloc(string_array, capacity * sizeof(char *));
+                        char **new_array = realloc(string_array, capacity * sizeof(char *));
+                        if (new_array == NULL)
+                        {
+                            perror("Something went wrong with the realloc.\n");
+                            exit(1);
+                        } else
+                        {
+                            string_array = realloc(string_array, capacity * sizeof(char *));
+                        }
                     }
 
                     // We have to create a new fullpath variable here before it gets
                     // assigned to the array
-                    char *new_path = malloc(1 * sizeof(char *));
-                    new_path = fullpath;
+                    char *new_path = malloc((strlen(fullpath) + 1) * sizeof(char));
+                    strcpy(new_path, fullpath);
 
                     string_array[idx] = new_path;
                     idx++;
@@ -190,7 +198,7 @@ void get_all_relevant_files()
     int s = 0; /* we use this to track the number of lines so we can free them */
     char **toss = get_relevant_files(&s);
     printf("There seemingly were %d lines.\n", s);
-    for (int i = 0; i < s; ++i)
+    for (int i = 0; i < sizeof(toss); ++i)
     {
         printf("%s\n", toss[i]);
     }
