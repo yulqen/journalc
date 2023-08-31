@@ -6,7 +6,6 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "date.h"
 
 Options opts;
 
@@ -192,18 +191,17 @@ void get_line_from_file(char *filepath)
 
     JournalLine jlines[100];  // fuck dynamic memory!
 
-    int linecount = 0;
-    char buffer[2000];
+    int count = 0;
+    char buf[2000];
 
     // Read each line from the file - the max chars read
-    // from the line in the file is the size of the buffer
+    // from the line in the file is the size of the buf
     // we have allocated above - so we won't go beyond it
-    int x = 0;
-    while (fgets(buffer, sizeof(buffer), file) != NULL)
+    while (fgets(buf, sizeof(buf), file) != NULL)
     {
         // Create a new struct
-        jlines[x] = *new_journalline(buffer, filepath);
-        x++;
+        jlines[count] = *new_journalline(buf, filepath);
+        count++;
     }
     fclose(file);
 
@@ -211,14 +209,13 @@ void get_line_from_file(char *filepath)
     /* printf("These lines are from the struct:\n\n"); */
     for (int i = 0; i < 200; ++i)
     {
+        // FIXME: This is where there segfault happens because we're trashing across 200 bits
         printf("%s\n", jlines[i].filename);
         printf("%s\n\n", jlines[i].line);
     }
-    // printf("%s", journal_lines[1].line);
-    /* printf("%s", journal_lines[2].line); */
 
     // free memory for each journal_line's line using free
-    for (int i = 0; i < linecount; ++i)
+    for (int i = 0; i < count; ++i)
     {
         free(jlines[i].line);
         free(jlines[i].filename);

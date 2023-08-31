@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "journal.h"
+#include "journal/journal.h"
 
 int main(int argc, char *argv[])
 {
