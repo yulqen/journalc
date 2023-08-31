@@ -9,7 +9,7 @@
 
 Options opts;
 
-JournalLine *new_journalline(char *line, char *filename)
+JournalLine *JournalLineCreate(char *line, char *filename)
 {
     JournalLine *jl = malloc(sizeof(JournalLine));
     if (jl == NULL)
@@ -41,7 +41,7 @@ JournalLine *new_journalline(char *line, char *filename)
     return jl;
 }
 
-void del_journalline(JournalLine *jl)
+void JournalLineDelete(JournalLine *jl)
 {
     if (jl != NULL)
     {
@@ -52,7 +52,7 @@ void del_journalline(JournalLine *jl)
 }
 
 /* Parses the command line arguments */
-void parse_args(int argc, char *const *argv)
+void ParseArgs(int argc, char *const *argv)
 {
     for (int i = 1; i < argc; i++)
     {
@@ -71,12 +71,12 @@ void parse_args(int argc, char *const *argv)
     }
 }
 
-char **get_relevant_files(int *linesize)
+char **GetRelevantFiles()
 {
     DIR *journal_dir;
     struct dirent *dir_information;
     struct stat file_stat;
-    char *fullpath = malloc(256 * sizeof(char));
+    char fullpath[256];
 
     if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
     {
@@ -97,7 +97,7 @@ char **get_relevant_files(int *linesize)
         {
             if (!S_ISDIR(file_stat.st_mode))
             {
-                int length = strlen(fullpath);
+                size_t length = strlen(fullpath);
                 const char *m_ext = fullpath + length - 3;
                 const char *t_ext = fullpath + length - 4;
                 if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
@@ -117,12 +117,12 @@ char **get_relevant_files(int *linesize)
                         }
                     }
 
-                    char *new_path = malloc((strlen(fullpath) + 1) * sizeof(char));
-                    strcpy(new_path, fullpath);
-
-                    // Mixing functionality
-                    get_line_from_file(new_path);
-
+                    char *new_path = strdup(fullpath);
+                    if (new_path == NULL)
+                    {
+                        perror("Memory allocation error for the new path.\n");
+                        exit(1);
+                    }
                     string_array[idx] = new_path;
                     idx++;
                 }
@@ -130,18 +130,15 @@ char **get_relevant_files(int *linesize)
         }
     }
 
-    *linesize = idx;
-
     if ((closedir(journal_dir) != 0))
     {
         perror("Unable to close directory");
     }
-    free(fullpath);
     return string_array;
 }
 
 // Free memory function
-void free_relevant_files(char **string_array, int linesize)
+void FreeRelevantFiles(char **string_array, int linesize)
 {
     for (int i = 0; i < linesize; i++)
     {
@@ -150,7 +147,7 @@ void free_relevant_files(char **string_array, int linesize)
     free(string_array);
 }
 
-int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, const char *line,
+int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line,
                                        const char *filename)
 {
     JournalLine newLine;
@@ -181,7 +178,7 @@ int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, cons
     return 0;
 }
 
-void get_line_from_file(char *filepath)
+void GetLineFromFile(char *filepath)
 {
     FILE *file = fopen(filepath, "r");
     if (file == NULL)
@@ -200,7 +197,7 @@ void get_line_from_file(char *filepath)
     while (fgets(buf, sizeof(buf), file) != NULL)
     {
         // Create a new struct
-        jlines[count] = *new_journalline(buf, filepath);
+        jlines[count] = *JournalLineCreate(buf, filepath);
         count++;
     }
     fclose(file);
@@ -222,15 +219,15 @@ void get_line_from_file(char *filepath)
     }
 }
 
-void get_all_relevant_files()
+void GetAllRelevantFiles()
 {
-    /* This is the main code that calls get_relevant_files() */
+    /* This is the main code that calls GetRelevantFiles() */
     int s = 0; /* we use this to track the number of lines so we can free them */
-    char **toss = get_relevant_files(&s);
+    char **toss = GetRelevantFiles(&s);
     printf("There seemingly were %d lines.\n", s);
     for (int i = 0; i < s; ++i)
     {
         printf("%s\n", toss[i]);
     }
-    free_relevant_files(toss, s);
+    FreeRelevantFiles(toss, s);
 }

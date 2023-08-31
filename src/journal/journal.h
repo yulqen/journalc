@@ -15,14 +15,14 @@ typedef struct
     char *filename;
 } JournalLine;
 
-JournalLine *new_journalline(char *line, char *filename);
-void del_journalline(JournalLine *jl);
+JournalLine *JournalLineCreate(char *line, char *filename);
+void JournalLineDelete(JournalLine *jl);
 
-void parse_args(int argc, char *const *argv);
-char **get_relevant_files(int *linesize);
-int journal_lines_insert_line_filename(JournalLine **lines, int *lineCount, const char *line,
+void ParseArgs(int argc, char *const *argv);
+char **GetRelevantFiles();
+int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line,
                                        const char *filename);
-void get_all_relevant_files();
-void get_line_from_file(char *filepath);
+void GetAllRelevantFiles();
+void GetLineFromFile(char *filepath);
 
 #endif
