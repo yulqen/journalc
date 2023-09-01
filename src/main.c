@@ -15,8 +15,9 @@ int main(int argc, char *argv[])
     //      - In doing so, it highlights the search term
     //  - Everything is formatted nicely
     ParseArgs(argc, argv);
-    char **toss = GetRelevantFiles();
-    for (int i = 0; i < 3; ++i)
+    int counter = 0;
+    char **toss = GetRelevantFiles(&counter);
+    for (int i = 0; i < counter; ++i)
     {
         printf("Received file: %s\n", toss[i]);
     }

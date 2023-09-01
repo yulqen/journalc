@@ -1,11 +1,11 @@
 #include "journal.h"
 
+#include <assert.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-
 
 Options opts;
 
@@ -71,8 +71,10 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
-char **GetRelevantFiles()
+char **GetRelevantFiles(int *counter)
 {
+    assert(*counter == 0);
+    int idx = *counter;
     DIR *journal_dir;
     struct dirent *dir_information;
     struct stat file_stat;
@@ -84,7 +86,6 @@ char **GetRelevantFiles()
         exit(1);
     }
 
-    int idx = 0;
     int capacity = 20;
     char **string_array = malloc(capacity * sizeof(char *));
 
@@ -134,6 +135,7 @@ char **GetRelevantFiles()
     {
         perror("Unable to close directory");
     }
+    *counter = idx;
     return string_array;
 }
 
