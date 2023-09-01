@@ -16,7 +16,7 @@ typedef struct
 } JournalLine;
 
 JournalLine *JournalLineCreate(char *line, char *filename);
-JournalLine *putLinesFromRelevantFilesIntoJournalLines(int *counter);
+JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter);
 void JournalLineDelete(JournalLine *jl);
 
 void ParseArgs(int argc, char *const *argv);

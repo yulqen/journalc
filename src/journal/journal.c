@@ -71,7 +71,7 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
-JournalLine *putLinesFromRelevantFilesIntoJournalLines(int *counter) {
+JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter) {
     assert(*counter == 0);
     int idx = *counter;
     DIR *journal_dir;
