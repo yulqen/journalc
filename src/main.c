@@ -16,10 +16,11 @@ int main(int argc, char *argv[])
     //  - Everything is formatted nicely
     ParseArgs(argc, argv);
     int counter = 0;
-    char **toss = GetRelevantFiles(&counter);
+    JournalLine **toss = putLinesFromRelevantFilesIntoJournalLines(&counter);
     for (int i = 0; i < counter; ++i)
     {
-        printf("Received file: %s\n", toss[i]);
+        // TODO: We need to get the number of lines in each file now too
+        printf("Received file: %s\n", toss[i]->filename);
     }
     free(toss);
     return 0;

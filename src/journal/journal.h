@@ -1,6 +1,6 @@
 #ifndef JOURNAL_H
 #define JOURNAL_H
-#define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/Archive"
+#define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/journal/home"
 
 /* Storage for program options */
 typedef struct
@@ -16,6 +16,7 @@ typedef struct
 } JournalLine;
 
 JournalLine *JournalLineCreate(char *line, char *filename);
+JournalLine *putLinesFromRelevantFilesIntoJournalLines(int *counter);
 void JournalLineDelete(JournalLine *jl);
 
 void ParseArgs(int argc, char *const *argv);

@@ -71,6 +71,70 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
+JournalLine *putLinesFromRelevantFilesIntoJournalLines(int *counter) {
+    assert(*counter == 0);
+    int idx = *counter;
+    DIR *journal_dir;
+    struct dirent *dir_information;
+    struct stat file_stat;
+    char fullpath[256];
+
+    if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
+    {
+        perror("Error opening directory.");
+        exit(1);
+    }
+
+    int capacity = 20;
+    JournalLine **jl_array = malloc(capacity * sizeof(JournalLine *));
+
+    while ((dir_information = readdir(journal_dir)) != 0)
+    {
+        strcpy(fullpath, JOURNAL_DIR_PATH);
+        strcat(fullpath, "/");
+        strcat(fullpath, dir_information->d_name);
+        if (!stat(fullpath, &file_stat))
+        {
+            if (!S_ISDIR(file_stat.st_mode))
+            {
+                size_t length = strlen(fullpath);
+                const char *m_ext = fullpath + length - 3;
+                const char *t_ext = fullpath + length - 4;
+                if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
+                {
+                    if (idx == capacity)
+                    {
+                        capacity = (int)(capacity * 1.5);
+                        printf("Expanding array to %d\n", capacity);
+                        JournalLine **new_array = realloc(jl_array, capacity * sizeof(char *));
+                        if (new_array == NULL)
+                        {
+                            perror("Something went wrong with the realloc.\n");
+                            exit(1);
+                        } else
+                        {
+                            jl_array = new_array;
+                        }
+                    }
+
+                    JournalLine *jl = JournalLineCreate("toss", fullpath);
+                    jl_array[idx] = jl;
+                    idx++;
+                }
+            }
+        }
+    }
+
+    if ((closedir(journal_dir) != 0))
+    {
+        perror("Unable to close directory");
+    }
+    *counter = idx;
+    return jl_array;
+}
+
+
+
 char **GetRelevantFiles(int *counter)
 {
     assert(*counter == 0);
