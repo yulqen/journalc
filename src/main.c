@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
     ParseArgs(argc, argv);
     char **dirs = (char *[]) {
         "/home/lemon/Documents/Notes/journal/home",
-        "/home/lemon/Documents/Notes/MOD/work_journal"
+        "/home/lemon/Documents/Notes/MOD/work_journal",
+        "/home/lemon/Documents/Notes/Archive"
     };
     int counter = 0;
     JournalLine **toss = putLinesFromRelevantFilesIntoJournalLines(&counter, dirs);

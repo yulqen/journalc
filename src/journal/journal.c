@@ -82,7 +82,7 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
     int capacity = 20;
     JournalLine **jl_array = malloc(capacity * sizeof(JournalLine *));
 
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < 3; i++)
     {
         assert(*counter == 0);
         if ((journal_dir = opendir(target_dirs[i])) == NULL)
@@ -132,10 +132,15 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
                         while (fgets(buf, sizeof buf, file) != NULL)
                         {
                             //TODO: This is where we put some filtering in based on what
-                            //    we're searching for' 
-                            JournalLine *jl = journalline_create(buf, fullpath);
-                            jl_array[idx] = jl;
-                            idx++;
+                            //    we're searching for
+                            char *search_term = "sprouting"; // here is the filter
+                            char *ptr = strstr(buf, search_term);
+                            if (ptr)
+                            {
+                                JournalLine *jl = journalline_create(buf, fullpath);
+                                jl_array[idx] = jl;
+                                idx++;
+                            }
                         }
                         fclose(file);
                     }
