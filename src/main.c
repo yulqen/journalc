@@ -23,8 +23,9 @@ int main(int argc, char *argv[])
     JournalLine **toss = putLinesFromRelevantFilesIntoJournalLines(&counter, dirs);
     for (int i = 0; i < counter; ++i)
     {
-        // TODO: We need to get the number of lines in each file now too
+        /* FIXME: need to print the file header, then iterate through all the lines....*/ 
         printf("Received file: %s\n", toss[i]->filename);
+        printf("Line: %s\n", toss[i]->line);
     }
     free(toss);
     return 0;

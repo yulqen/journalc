@@ -120,9 +120,24 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
                             }
                         }
 
-                        JournalLine *jl = journalline_create("toss", fullpath);
-                        jl_array[idx] = jl;
-                        idx++;
+                        // TODO: Here is where we need to parse the file
+                        FILE *file = fopen(fullpath, "r");
+                        if (file == NULL)
+                        {
+                            perror("Error opening file.");
+                        }
+
+                        char buf[2000];
+
+                        while (fgets(buf, sizeof buf, file) != NULL)
+                        {
+                            //TODO: This is where we put some filtering in based on what
+                            //    we're searching for' 
+                            JournalLine *jl = journalline_create(buf, fullpath);
+                            jl_array[idx] = jl;
+                            idx++;
+                        }
+                        fclose(file);
                     }
                 }
             }
@@ -137,73 +152,73 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
     return jl_array;
 }
 
-//char **GetRelevantFiles(int *counter)
+// char **GetRelevantFiles(int *counter)
 //{
-//    assert(*counter == 0);
-//    int idx = *counter;
-//    DIR *journal_dir;
-//    struct dirent *dir_information;
-//    struct stat file_stat;
-//    char fullpath[256];
+//     assert(*counter == 0);
+//     int idx = *counter;
+//     DIR *journal_dir;
+//     struct dirent *dir_information;
+//     struct stat file_stat;
+//     char fullpath[256];
 //
-//    if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
-//    {
-//        perror("Error opening directory.");
-//        exit(1);
-//    }
+//     if ((journal_dir = opendir(JOURNAL_DIR_PATH)) == NULL)
+//     {
+//         perror("Error opening directory.");
+//         exit(1);
+//     }
 //
-//    int capacity = 20;
-//    char **string_array = malloc(capacity * sizeof(char *));
+//     int capacity = 20;
+//     char **string_array = malloc(capacity * sizeof(char *));
 //
-//    while ((dir_information = readdir(journal_dir)) != 0)
-//    {
-//        strcpy(fullpath, JOURNAL_DIR_PATH);
-//        strcat(fullpath, "/");
-//        strcat(fullpath, dir_information->d_name);
-//        if (!stat(fullpath, &file_stat))
-//        {
-//            if (!S_ISDIR(file_stat.st_mode))
-//            {
-//                size_t length = strlen(fullpath);
-//                const char *m_ext = fullpath + length - 3;
-//                const char *t_ext = fullpath + length - 4;
-//                if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
-//                {
-//                    if (idx == capacity)
-//                    {
-//                        capacity = (int)(capacity * 1.5);
-//                        printf("Expanding array to %d\n", capacity);
-//                        char **new_array = realloc(string_array, capacity * sizeof(char *));
-//                        if (new_array == NULL)
-//                        {
-//                            perror("Something went wrong with the realloc.\n");
-//                            exit(1);
-//                        } else
-//                        {
-//                            string_array = new_array;
-//                        }
-//                    }
+//     while ((dir_information = readdir(journal_dir)) != 0)
+//     {
+//         strcpy(fullpath, JOURNAL_DIR_PATH);
+//         strcat(fullpath, "/");
+//         strcat(fullpath, dir_information->d_name);
+//         if (!stat(fullpath, &file_stat))
+//         {
+//             if (!S_ISDIR(file_stat.st_mode))
+//             {
+//                 size_t length = strlen(fullpath);
+//                 const char *m_ext = fullpath + length - 3;
+//                 const char *t_ext = fullpath + length - 4;
+//                 if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
+//                 {
+//                     if (idx == capacity)
+//                     {
+//                         capacity = (int)(capacity * 1.5);
+//                         printf("Expanding array to %d\n", capacity);
+//                         char **new_array = realloc(string_array, capacity * sizeof(char *));
+//                         if (new_array == NULL)
+//                         {
+//                             perror("Something went wrong with the realloc.\n");
+//                             exit(1);
+//                         } else
+//                         {
+//                             string_array = new_array;
+//                         }
+//                     }
 //
-//                    char *new_path = strdup(fullpath);
-//                    if (new_path == NULL)
-//                    {
-//                        perror("Memory allocation error for the new path.\n");
-//                        exit(1);
-//                    }
-//                    string_array[idx] = new_path;
-//                    idx++;
-//                }
-//            }
-//        }
-//    }
+//                     char *new_path = strdup(fullpath);
+//                     if (new_path == NULL)
+//                     {
+//                         perror("Memory allocation error for the new path.\n");
+//                         exit(1);
+//                     }
+//                     string_array[idx] = new_path;
+//                     idx++;
+//                 }
+//             }
+//         }
+//     }
 //
-//    if ((closedir(journal_dir) != 0))
-//    {
-//        perror("Unable to close directory");
-//    }
-//    *counter = idx;
-//    return string_array;
-//}
+//     if ((closedir(journal_dir) != 0))
+//     {
+//         perror("Unable to close directory");
+//     }
+//     *counter = idx;
+//     return string_array;
+// }
 
 // Free memory function
 void FreeRelevantFiles(char **string_array, int linesize)
@@ -286,15 +301,15 @@ void GetLineFromFile(char *filepath)
     }
 }
 
-//void GetAllRelevantFiles()
+// void GetAllRelevantFiles()
 //{
-//    /* This is the main code that calls GetRelevantFiles() */
-//    int s = 0; /* we use this to track the number of lines so we can free them */
-//    char **toss = GetRelevantFiles(&s);
-//    printf("There seemingly were %d lines.\n", s);
-//    for (int i = 0; i < s; ++i)
-//    {
-//        printf("%s\n", toss[i]);
-//    }
-//    FreeRelevantFiles(toss, s);
-//}
+//     /* This is the main code that calls GetRelevantFiles() */
+//     int s = 0; /* we use this to track the number of lines so we can free them */
+//     char **toss = GetRelevantFiles(&s);
+//     printf("There seemingly were %d lines.\n", s);
+//     for (int i = 0; i < s; ++i)
+//     {
+//         printf("%s\n", toss[i]);
+//     }
+//     FreeRelevantFiles(toss, s);
+// }
