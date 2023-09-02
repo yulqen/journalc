@@ -127,7 +127,7 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
                             perror("Error opening file.");
                         }
 
-                        char buf[2000];
+                        char buf[2000]; // Assuming that we don't get many lines longer than 2000 characters
 
                         while (fgets(buf, sizeof buf, file) != NULL)
                         {
