@@ -3,21 +3,14 @@
 #define JOURNAL_DIR_PATH "/home/lemon/Documents/Notes/journal/home"
 
 /* Storage for program options */
-typedef struct
-{
-    char *search_term;
-} Options;
+typedef struct { char *search_term; } Options;
 
 /* Storage for text extracted from a line in a target file */
-typedef struct
-{
-    char *line;
-    char *filename;
-} JournalLine;
+typedef struct{ char *line; char *filename; } JournalLine;
 
 JournalLine *JournalLineCreate(char *line, char *filename);
-JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter);
 void JournalLineDelete(JournalLine *jl);
+JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter);
 
 void ParseArgs(int argc, char *const *argv);
 char **GetRelevantFiles(int *counter);
