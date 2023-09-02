@@ -15,8 +15,12 @@ int main(int argc, char *argv[])
     //      - In doing so, it highlights the search term
     //  - Everything is formatted nicely
     ParseArgs(argc, argv);
+    char **dirs = (char *[]) {
+        "/home/lemon/Documents/Notes/journal/home",
+        "/home/lemon/Documents/Notes/journal/work"
+    };
     int counter = 0;
-    JournalLine **toss = putLinesFromRelevantFilesIntoJournalLines(&counter);
+    JournalLine **toss = putLinesFromRelevantFilesIntoJournalLines(&counter, dirs);
     for (int i = 0; i < counter; ++i)
     {
         // TODO: We need to get the number of lines in each file now too
