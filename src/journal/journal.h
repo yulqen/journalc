@@ -2,25 +2,13 @@
 #define JOURNAL_H
 
 /* Storage for program options */
-typedef struct
-{
-    char *search_term;
-} Options;
+typedef struct { char *search_term; } Options;
 
 /* Storage for text extracted from a line in a target file */
-typedef struct
-{
-    char *line;
-    char *filename;
-} JournalLine;
+typedef struct{ char *line; char *filename; } JournalLine;
 
-
-/* These are the functions that are currently in final state */ 
 JournalLine *journalline_create(char *line, char *filename);
-void journallist_destroy(JournalLine *jl);
-
-/* This needs to be renamed and worked on */
-
+void journalline_destroy(JournalLine *jl);
 JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **target_dirs);
 
 /* Legacy functions */
