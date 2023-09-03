@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
                 "/home/lemon/Documents/Notes/journal/archives"
     };
     int idx = 0;
-    JournalLine **toss = putLinesFromRelevantFilesIntoJournalLines(&idx, dirs, "Boris");
+    JournalLine **toss = journal_search_directories_search_term(&idx, dirs, "Boris");
     for (int i = 0; i < idx; ++i)
     {
         /* FIXME: need to print the file header, then iterate through all the lines....*/

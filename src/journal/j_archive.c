@@ -15,7 +15,7 @@ struct archive *prepare_archive()
     return a;
 }
 
-void operate_on_archive(struct archive *a, char *filepath, JournalLine **jls,
+void tgz_open_and_search(struct archive *a, char *filepath, JournalLine **jls,
                         const char *search_term, int *idx)
 {
     a = prepare_archive();
@@ -25,12 +25,12 @@ void operate_on_archive(struct archive *a, char *filepath, JournalLine **jls,
         printf("Failed to open archive: %s \n", filepath);
         return;
     }
-    get_lines_from_tgz(a, jls, search_term, idx);
+    tgz_search_in_file(a, jls, search_term, idx);
     archive_read_close(a);
     archive_read_free(a);
 }
 
-void get_lines_from_tgz(struct archive *a, JournalLine **jls, const char *search_term, int *idx)
+void tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int *idx)
 {
     struct archive_entry *entry;
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK)

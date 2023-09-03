@@ -71,7 +71,7 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
-JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *idx, char **target_dirs, char *search_term)
+JournalLine **journal_search_directories_search_term(int *idx, char **target_dirs, char *search_term)
 {
     assert(*idx == 0);
     DIR *journal_dir;
@@ -148,7 +148,7 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *idx, char **target_
                     } else if ((strcmp(tgz_ext, ".tgz") == 0))  {
                         // It is an archive file
                         struct archive *a = prepare_archive();
-                        operate_on_archive(a, fullpath, jl_array, search_term, idx);
+                        tgz_open_and_search(a, fullpath, jl_array, search_term, idx);
                     }
                 }
             }
