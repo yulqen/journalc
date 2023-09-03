@@ -103,26 +103,50 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                     const char *m_ext = fullpath + length - 3;
                     const char *t_ext = fullpath + length - 4;
                     const char *tgz_ext = fullpath + length - 4;
+
+
+                    // If it is a normal text file (md or text)
                     if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                     {
-                        if (*idx == capacity)
-                        {
-                            capacity = (int)(capacity * 1.5);
-                            printf("Expanding array to %d\n", capacity);
-                            JournalLine **new_array = realloc(jl_array, capacity * sizeof(char *));
-                            if (new_array == NULL)
-                            {
-                                perror("Something went wrong with the realloc.\n");
-                                exit(1);
-                            } else
-                            {
-                                jl_array = new_array;
-                            }
-                        }
+                        jl_array = text_file_search(idx, search_term, fullpath, capacity, jl_array);
 
-                        // TODO: Here is where we need to parse the file
+                        // Or a tgz file
+                    } else if ((strcmp(tgz_ext, ".tgz") == 0))
+                    {
+                        jl_array = tgz_search(idx, search_term, fullpath, jl_array);
+                    }
+                }
+            }
+        }
+
+        if ((closedir(journal_dir) != 0))
+        {
+            perror("Unable to close directory");
+        }
+    }
+    return jl_array;
+}
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath,
+                               int capacity, JournalLine **jl_array)
+{
+    if (*idx == capacity)
+    {
+        capacity = (int)(capacity * 1.5);
+        printf("Expanding array to %d\n", capacity);
+        JournalLine **new_array = realloc(jl_array, capacity * sizeof(char *));
+        if (new_array == NULL)
+        {
+            perror("Something went wrong with the realloc.\n");
+            exit(1);
+        } else
+        {
+            jl_array = new_array;
+        }
+    }
+
+    // TODO: Here is where we need to parse the file
                         FILE *file = fopen(fullpath, "r");
-                        if (file == NULL)
+    if (file == NULL)
                         {
                             perror("Error opening file.");
                         }
@@ -148,22 +172,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                             }
                         }
                         fclose(file);
-                    } else if ((strcmp(tgz_ext, ".tgz") == 0))
-                    {
-                        // It is an archive file
-                        struct archive *a = prepare_archive();
-                        tgz_open_and_search(a, fullpath, jl_array, search_term, idx);
-                    }
-                }
-            }
-        }
-
-        if ((closedir(journal_dir) != 0))
-        {
-            perror("Unable to close directory");
-        }
-    }
-    return jl_array;
+                        return jl_array;
 }
 
 // Free memory function

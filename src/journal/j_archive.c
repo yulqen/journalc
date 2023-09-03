@@ -15,21 +15,22 @@ struct archive *prepare_archive()
     return a;
 }
 
-void tgz_open_and_search(struct archive *a, char *filepath, JournalLine **jls,
-                         const char *search_term, int *idx)
+JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, JournalLine **jls)
 {
-    a = prepare_archive();
+    struct archive *a = prepare_archive();
     int r = archive_read_open_filename(a, filepath, 10242);
     if (r != ARCHIVE_OK)
     {
         printf("Failed to open archive: %s \n", filepath);
-        return;
+        return NULL;
     }
-    tgz_search_in_file(a, jls, search_term, idx);
+    jls = tgz_search_in_file(a, jls, search_term, idx);
     archive_read_close(a);
     archive_read_free(a);
+    return jls;
 }
-void tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int *idx)
+JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term,
+                                 int *idx)
 {
     struct archive_entry *entry;
 
@@ -63,8 +64,9 @@ void tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search
                         if (ptr)
                         {
                             JournalLine *jl = journalline_create(line, filename);
-//                            printf("Adding %s to the array from %s\n", line,
-//                                   archive_entry_pathname(entry));
+                            //                            printf("Adding %s to the array from %s\n",
+                            //                            line,
+                            //                                   archive_entry_pathname(entry));
                             jls[*idx] = jl;
                             (*idx)++;
                         }
@@ -75,4 +77,5 @@ void tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search
             }
         }
     }
+    return jls;
 }

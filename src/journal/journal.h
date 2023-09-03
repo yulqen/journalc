@@ -14,13 +14,17 @@ typedef struct{ char *line; char *filename; } JournalLine;
 /* tgz handling */
 struct archive *prepare_archive();
 
+// Search through md and txt files
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath,
+                               int capacity, JournalLine **jl_array);
+
 /* Given a suitably prepared archive (see prepare_archive()) and an array of JournalLine structs, will
  * search for search_term in filepath. Also requires to be passed a pointer to an active counter, idx.
  * */
-void tgz_open_and_search(struct archive *a, char *filepath, JournalLine **jls, const char *search_term, int *idx);
+JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, JournalLine **jls);
 
-/* An internal function called from tgz_open_and_search to do the actual finding. */
-void tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int *idx);
+/* An internal function called from tgz_search to do the actual finding. */
+JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int *idx);
 
 // Create a JournalLine object.
 JournalLine *journalline_create(char *line, const char *filename);
