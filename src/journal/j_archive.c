@@ -55,7 +55,7 @@ void get_lines_from_tgz(struct archive *a, JournalLine **jls, const char *search
                         char *ptr = strstr(line, search_term);
                         if (ptr)
                         {
-                            JournalLine *jl = journalline_create(buffer, filename);
+                            JournalLine *jl = journalline_create(line, filename);
                             jls[*idx] = jl;
                             (*idx)++;
                         }

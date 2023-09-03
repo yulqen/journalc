@@ -15,7 +15,7 @@ void get_lines_from_tgz(struct archive *a, JournalLine **jls, const char *search
 
 JournalLine *journalline_create(char *line, const char *filename);
 void journalline_destroy(JournalLine *jl);
-JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **target_dirs);
+JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *idx, char **target_dirs, char *search_term);
 
 /* Legacy functions */
 int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line,

@@ -71,10 +71,9 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
-JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **target_dirs)
+JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *idx, char **target_dirs, char *search_term)
 {
-    assert(*counter == 0);
-    int idx = 0;
+    assert(*idx == 0);
     DIR *journal_dir;
     struct dirent *dir_information;
     struct stat file_stat;
@@ -82,9 +81,8 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
     int capacity = 20;
     JournalLine **jl_array = malloc(capacity * sizeof(JournalLine *));
 
-    for (size_t i = 0; i < 1; i++)
+    for (size_t i = 0; i < 4; i++)
     {
-        assert(*counter == 0);
         if ((journal_dir = opendir(target_dirs[i])) == NULL)
         {
             perror("Error opening directory.");
@@ -106,7 +104,7 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
                     const char *tgz_ext = fullpath + length - 4;
                     if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                     {
-                        if (idx == capacity)
+                        if (*idx == capacity)
                         {
                             capacity = (int)(capacity * 1.5);
                             printf("Expanding array to %d\n", capacity);
@@ -132,23 +130,25 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
 
                         while (fgets(buf, sizeof buf, file) != NULL)
                         {
-                            //TODO: This is where we put some filtering in based on what
-                            //    we're searching for
-                            char *search_term = "SDL2"; // here is the filter
-                            char *ptr = strstr(buf, search_term);
-                            if (ptr)
+                            const char *delimeter = "\n";
+                            char *line = strtok(buf, delimeter);
+                            while (line != NULL)
                             {
-                                JournalLine *jl = journalline_create(buf, fullpath);
-                                jl_array[idx] = jl;
-                                idx++;
+                                char *ptr = strstr(buf, search_term);
+                                if (ptr)
+                                {
+                                    JournalLine *jl = journalline_create(line, fullpath);
+                                    jl_array[*idx] = jl;
+                                    (*idx)++;
+                                }
+                                line = strtok(NULL, delimeter);
                             }
                         }
                         fclose(file);
                     } else if ((strcmp(tgz_ext, ".tgz") == 0))  {
                         // It is an archive file
-                        char *search_term = "Berwick"; // here is the filter
                         struct archive *a = prepare_archive();
-                        operate_on_archive(a, fullpath, jl_array, search_term, &idx);
+                        operate_on_archive(a, fullpath, jl_array, search_term, idx);
                     }
                 }
             }
@@ -159,7 +159,6 @@ JournalLine **putLinesFromRelevantFilesIntoJournalLines(int *counter, char **tar
             perror("Unable to close directory");
         }
     }
-    *counter = idx;
     return jl_array;
 }
 
