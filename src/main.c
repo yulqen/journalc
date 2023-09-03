@@ -6,15 +6,16 @@
 int main(int argc, char *argv[])
 {
     ParseArgs(argc, argv);
-    char **dirs = (char *[])
-    {
-                "/home/lemon/Documents/Notes/journal/home",
-                "/home/lemon/Documents/Notes/MOD/work_journal",
-                "/home/lemon/Documents/Notes/Archive",
-                "/home/lemon/Documents/Notes/journal/archives"
-    };
+    char *dirs[] = {
+//        "/home/lemon/Documents/Notes/journal/home",
+//        "/home/lemon/Documents/Notes/MOD/work_journal",
+//        "/home/lemon/Documents/Notes/Archive",
+        "/home/lemon/Documents/Notes/journal/archives"};
+    // Calculate the size of the array of dicts
+    int dir_count = sizeof dirs / sizeof dirs[0];
+
     int idx = 0;
-    JournalLine **toss = journal_search_directories_search_term(&idx, dirs, "Boris");
+    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "Python");
     for (int i = 0; i < idx; ++i)
     {
         /* FIXME: need to print the file header, then iterate through all the lines....*/

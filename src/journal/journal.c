@@ -71,7 +71,8 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
-JournalLine **journal_search_directories_search_term(int *idx, char **target_dirs, char *search_term)
+JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs,
+                                                     char *search_term)
 {
     assert(*idx == 0);
     DIR *journal_dir;
@@ -81,7 +82,7 @@ JournalLine **journal_search_directories_search_term(int *idx, char **target_dir
     int capacity = 20;
     JournalLine **jl_array = malloc(capacity * sizeof(JournalLine *));
 
-    for (size_t i = 0; i < 4; i++)
+    for (size_t i = 0; i < dir_count; i++)
     {
         if ((journal_dir = opendir(target_dirs[i])) == NULL)
         {
@@ -126,26 +127,29 @@ JournalLine **journal_search_directories_search_term(int *idx, char **target_dir
                             perror("Error opening file.");
                         }
 
-                        char buf[2000]; // Assuming that we don't get many lines longer than 2000 characters
+                        char buf[2000];  // Assuming that we don't get many lines longer than 2000
+                                         // characters
 
                         while (fgets(buf, sizeof buf, file) != NULL)
                         {
-                            const char *delimeter = "\n";
-                            char *line = strtok(buf, delimeter);
+                            const char *delim = "\n";
+                            char *line = strtok(buf, delim);
                             while (line != NULL)
                             {
                                 char *ptr = strstr(buf, search_term);
                                 if (ptr)
                                 {
                                     JournalLine *jl = journalline_create(line, fullpath);
+//                                    printf("Adding %s to the array from %s\n", line, fullpath);
                                     jl_array[*idx] = jl;
                                     (*idx)++;
                                 }
-                                line = strtok(NULL, delimeter);
+                                line = strtok(NULL, delim);
                             }
                         }
                         fclose(file);
-                    } else if ((strcmp(tgz_ext, ".tgz") == 0))  {
+                    } else if ((strcmp(tgz_ext, ".tgz") == 0))
+                    {
                         // It is an archive file
                         struct archive *a = prepare_archive();
                         tgz_open_and_search(a, fullpath, jl_array, search_term, idx);

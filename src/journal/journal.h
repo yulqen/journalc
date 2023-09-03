@@ -29,8 +29,8 @@ JournalLine *journalline_create(char *line, const char *filename);
 void journalline_destroy(JournalLine *jl);
 
 // Main function that walks an array of directories and looks within md, txt and tgz files for
-// the search term.
-JournalLine **journal_search_directories_search_term(int *idx, char **target_dirs, char *search_term);
+// the search term. Requires the number of directories to be searched - dir_count.
+JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs, char *search_term);
 
 /* ------------ Legacy functions ------------------------------ */
 int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line,
