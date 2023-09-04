@@ -51,10 +51,6 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                 size_t bytesRead;
                 while ((bytesRead = archive_read_data(a, buffer, bufferSize)) > 0)
                 {
-                    if (*idx == capacity)
-                    {
-                        journalline_array_reallocate(idx, &capacity, &jls);
-                    }
 
                     const char *delim = "\n";
                     char *saveptr = NULL;
@@ -64,6 +60,10 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                         char *ptr = strstr(line, search_term);
                         if (ptr)
                         {
+                            if (*idx == capacity)
+                            {
+                                journalline_array_reallocate(idx, &capacity, &jls);
+                            }
                             JournalLine *jl = journalline_create(line, filename);
                             jls[*idx] = jl;
                             (*idx)++;

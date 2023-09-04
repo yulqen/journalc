@@ -167,10 +167,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
 
 JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity, JournalLine **jls)
 {
-    if (*idx == capacity)
-    {
-        journalline_array_reallocate(idx, &capacity, &jls);
-    }
 
     // TODO: Here is where we need to parse the file
     FILE *file = fopen(fullpath, "r");
@@ -190,24 +186,13 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         char *ptr = strstr(line, search_term);
         if (ptr)
         {
+            if (*idx == capacity)
+            {
+                journalline_array_reallocate(idx, &capacity, &jls);
+            }
             JournalLine *jl = journalline_create(line, fullpath);
             jls[*idx] = jl;
             (*idx)++;
-
-            if (*idx == capacity)
-            {
-                // realloc on demand
-                capacity = (int)(capacity * 1.5);
-                JournalLine **new_array = realloc(jls, capacity * sizeof(JournalLine *));
-                if (new_array == NULL)
-                {
-                    perror("Something went wrong with the realloc.\n");
-                    exit(1);
-                } else
-                {
-                    jls = new_array;
-                }
-            }
         }
     }
 
