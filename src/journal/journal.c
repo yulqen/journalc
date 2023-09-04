@@ -79,9 +79,11 @@ void journalline_destroy(JournalLine *jl)
 {
     if (jl != NULL)
     {
+        write_log("Freeing line: %s at %p; ", jl->line, jl->line);
         free(jl->line);
+        write_log("in file: %s\n", jl->filename);
         free(jl->filename);
-        free(jl);
+        //        free(jl);
     }
 }
 
@@ -112,7 +114,6 @@ JournalLine *journalline_create(char *line, const char *filename)
         exit(1);
     }
     strcpy(jl->filename, filename);  // Copy the content of the input filename
-
     return jl;
 }
 
