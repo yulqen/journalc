@@ -19,7 +19,7 @@ struct archive *prepare_archive();
 
 // Search through md and txt files
 JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath,
-                               int capacity, JournalLine **jl_array);
+                               int capacity, JournalLine **jls);
 
 /* Given a suitably prepared archive (see prepare_archive()) and an array of JournalLine structs, will
  * search for search_term in filepath. Also requires to be passed a pointer to an active counter, idx.

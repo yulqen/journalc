@@ -150,19 +150,19 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     return jl_array;
 }
 JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath,
-                               int capacity, JournalLine **jl_array)
+                               int capacity, JournalLine **jls)
 {
     if (*idx == capacity)
     {
         capacity = (int)(capacity * 1.5);
-        JournalLine **new_array = realloc(jl_array, capacity * sizeof(char *));
+        JournalLine **new_array = realloc(jls, capacity * sizeof(char *));
         if (new_array == NULL)
         {
             perror("Something went wrong with the realloc.\n");
             exit(1);
         } else
         {
-            jl_array = new_array;
+            jls = new_array;
         }
     }
 
@@ -185,23 +185,21 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         if (ptr)
         {
             JournalLine *jl = journalline_create(line, fullpath);
-            jl_array[*idx] = jl;
+            jls[*idx] = jl;
             (*idx)++;
 
             if (*idx == capacity)
             {
                 // realloc on demand
                 capacity = (int)(capacity * 1.5);
-                printf("Expanding array to %d\n", capacity);
-
-                JournalLine **new_array = realloc(jl_array, capacity * sizeof(JournalLine *));
+                JournalLine **new_array = realloc(jls, capacity * sizeof(JournalLine *));
                 if (new_array == NULL)
                 {
                     perror("Something went wrong with the realloc.\n");
                     exit(1);
                 } else
                 {
-                    jl_array = new_array;
+                    jls = new_array;
                 }
             }
         }
@@ -209,7 +207,7 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
 
     free(line);
     fclose(file);
-    return jl_array;
+    return jls;
 }
 
 // Free memory function
