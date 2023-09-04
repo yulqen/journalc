@@ -11,6 +11,25 @@
 
 Options opts;
 
+void ParseArgs(int argc, char *const *argv)
+{
+    for (int i = 1; i < argc; i++)
+    {
+        {
+            if (i < argc - 1)
+            {  // protection against segmentation fault
+                printf("Searching for (-g): %s\n", argv[i + 1]);
+                opts.search_term = argv[i + 1];
+            } else
+            {
+                printf("-g flag requires one argument\n");
+                return;
+            }
+            i++;  // skip next argument as it's already used as -g value
+        }
+    }
+}
+
 void write_log(const char *format, ...)
 {
     va_list args;
@@ -32,6 +51,33 @@ void write_log(const char *format, ...)
 
     fprintf(file, "\n");
     fclose(file);
+}
+
+void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
+{
+    if (*idx == (*capacity))
+    {
+        (*capacity) = (int)((*capacity) * 1.5);
+        JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(char *));
+        if (new_array == NULL)
+        {
+            perror("Something went wrong with the realloc.\n");
+            exit(1);
+        } else
+        {
+            (*jls) = new_array;
+        }
+    }
+}
+
+void journallist_destroy(JournalLine *jl)
+{
+    if (jl != NULL)
+    {
+        free(jl->line);
+        free(jl->filename);
+        free(jl);
+    }
 }
 
 JournalLine *journalline_create(char *line, const char *filename)
@@ -63,36 +109,6 @@ JournalLine *journalline_create(char *line, const char *filename)
     strcpy(jl->filename, filename);  // Copy the content of the input filename
 
     return jl;
-}
-
-void journallist_destroy(JournalLine *jl)
-{
-    if (jl != NULL)
-    {
-        free(jl->line);
-        free(jl->filename);
-        free(jl);
-    }
-}
-
-/* Parses the command line arguments */
-void ParseArgs(int argc, char *const *argv)
-{
-    for (int i = 1; i < argc; i++)
-    {
-        {
-            if (i < argc - 1)
-            {  // protection against segmentation fault
-                printf("Searching for (-g): %s\n", argv[i + 1]);
-                opts.search_term = argv[i + 1];
-            } else
-            {
-                printf("-g flag requires one argument\n");
-                return;
-            }
-            i++;  // skip next argument as it's already used as -g value
-        }
-    }
 }
 
 JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs, char *search_term)
@@ -148,6 +164,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     }
     return jls;
 }
+
 JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity, JournalLine **jls)
 {
     if (*idx == capacity)
@@ -199,25 +216,7 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
     return jls;
 }
 
-void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
-{
-    if (*idx == (*capacity))
-    {
-        (*capacity) = (int)((*capacity) * 1.5);
-        JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(char *));
-        if (new_array == NULL)
-        {
-            perror("Something went wrong with the realloc.\n");
-            exit(1);
-        } else
-        {
-            (*jls) = new_array;
-        }
-    }
-}
-
-// Free memory function
-void FreeRelevantFiles(char **string_array, int linesize)
+void string_array_free(char **string_array, int linesize)
 {
     for (int i = 0; i < linesize; i++)
     {
