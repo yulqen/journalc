@@ -6,8 +6,32 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <stdarg.h>
+#include <time.h>
 
 Options opts;
+
+void write_log(const char *format, ...)
+{
+    va_list args;
+    FILE *file = fopen("log.txt", "a");
+    if (file == NULL) {
+        perror("Error opening file.");
+        return;
+    }
+
+    // Get current time
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    fprintf(file,"%02d:%02d:%02d: ", tm.tm_hour, tm.tm_min, tm.tm_sec);
+
+    va_start(args, format);
+    vfprintf(file, format, args);
+    va_end(args);
+
+    fprintf(file, "\n");
+    fclose(file);
+}
 
 JournalLine *journalline_create(char *line, const char *filename)
 {
@@ -104,7 +128,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                     const char *t_ext = fullpath + length - 4;
                     const char *tgz_ext = fullpath + length - 4;
 
-
                     // If it is a normal text file (md or text)
                     if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                     {
@@ -113,7 +136,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                         // Or a tgz file
                     } else if ((strcmp(tgz_ext, ".tgz") == 0))
                     {
-                        jl_array = tgz_search(idx, search_term, fullpath, jl_array);
+                        jl_array = tgz_search(idx, search_term, fullpath, capacity, jl_array);
                     }
                 }
             }
@@ -121,7 +144,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
 
         if ((closedir(journal_dir) != 0))
         {
-            perror("Unable to close directory");
+            printf("Unable to close directory");
         }
     }
     return jl_array;
@@ -145,34 +168,50 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
     }
 
     // TODO: Here is where we need to parse the file
-                        FILE *file = fopen(fullpath, "r");
+    FILE *file = fopen(fullpath, "r");
     if (file == NULL)
-                        {
-                            perror("Error opening file.");
-                        }
+    {
+        perror("Error opening file.");
+    }
 
-                        char buf[2000];  // Assuming that we don't get many lines longer than 2000
-                                         // characters
+    char buf[2000];  // Assuming that we don't get many lines longer than 2000
+                     // characters
 
-                        while (fgets(buf, sizeof buf, file) != NULL)
-                        {
-                            const char *delim = "\n";
-                            char *line = strtok(buf, delim);
-                            while (line != NULL)
-                            {
-                                char *ptr = strstr(buf, search_term);
-                                if (ptr)
-                                {
-                                    JournalLine *jl = journalline_create(line, fullpath);
-//                                    printf("Adding %s to the array from %s\n", line, fullpath);
-                                    jl_array[*idx] = jl;
-                                    (*idx)++;
-                                }
-                                line = strtok(NULL, delim);
-                            }
-                        }
-                        fclose(file);
-                        return jl_array;
+    size_t size = 2048;
+    char *line = malloc(size);
+
+    while (getline(&line, &size, file) != -1)
+    {
+        char *ptr = strstr(line, search_term);
+        if (ptr)
+        {
+            JournalLine *jl = journalline_create(line, fullpath);
+            printf("TEXTFILE: %s\n", line, fullpath);
+            jl_array[*idx] = jl;
+            (*idx)++;
+
+            if (*idx == capacity)
+            {
+                // realloc on demand
+                capacity = (int)(capacity * 1.5);
+                printf("Expanding array to %d\n", capacity);
+
+                JournalLine **new_array = realloc(jl_array, capacity * sizeof(JournalLine *));
+                if (new_array == NULL)
+                {
+                    perror("Something went wrong with the realloc.\n");
+                    exit(1);
+                } else
+                {
+                    jl_array = new_array;
+                }
+            }
+        }
+    }
+
+    free(line);
+    fclose(file);
+    return jl_array;
 }
 
 // Free memory function

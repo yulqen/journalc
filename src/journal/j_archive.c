@@ -3,6 +3,7 @@
 //
 #include <archive.h>
 #include <archive_entry.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "journal.h"
@@ -15,7 +16,8 @@ struct archive *prepare_archive()
     return a;
 }
 
-JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, JournalLine **jls)
+JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int capacity,
+                         JournalLine **jls)
 {
     struct archive *a = prepare_archive();
     int r = archive_read_open_filename(a, filepath, 10242);
@@ -24,13 +26,13 @@ JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath
         printf("Failed to open archive: %s \n", filepath);
         return NULL;
     }
-    jls = tgz_search_in_file(a, jls, search_term, idx);
+    jls = tgz_search_in_file(a, jls, search_term, capacity, idx);
     archive_read_close(a);
     archive_read_free(a);
     return jls;
 }
 JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term,
-                                 int *idx)
+                                 int capacity, int *idx)
 {
     struct archive_entry *entry;
 
@@ -52,9 +54,27 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                 size_t bytesRead;
                 while ((bytesRead = archive_read_data(a, buffer, bufferSize)) > 0)
                 {
+
+                    write_log("idx is %d and capacity is %d\n", *idx, capacity);
+                    if (*idx == capacity)
+                    {
+                        capacity = (int)(capacity * 1.5);
+                        write_log("Expanding array to %d\n", capacity);
+                        JournalLine **new_array = realloc(jls, capacity * sizeof(char *));
+                        if (new_array == NULL)
+                        {
+                            perror("Something went wrong with the realloc.\n");
+                            exit(1);
+                        } else
+                        {
+                            jls = new_array;
+                        }
+                    }
+
+
                     //                    printf("Bytes read: %zu ", bytesRead);
                     const char *delim = "\n";
-                    char *saveptr;
+                    char *saveptr = NULL;
                     char *line = strtok_r(buffer, delim, &saveptr);
                     while (line != NULL)
                     {
@@ -67,11 +87,12 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                             //                            printf("Adding %s to the array from %s\n",
                             //                            line,
                             //                                   archive_entry_pathname(entry));
+                            printf("ARCHIVE: %s\n", line);  // DEBUG line
                             jls[*idx] = jl;
+                            write_log("When adding to jl in ARCHIVE, idx is %d", *idx);
                             (*idx)++;
                         }
                         line = strtok_r(NULL, delim, &saveptr);
-                        printf("line: %s\n", line);
                     }
                 }
             }
