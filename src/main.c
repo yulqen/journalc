@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "journal/journal.h"
 
@@ -12,10 +13,15 @@ int main(int argc, char *argv[])
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "method");
+    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "python");
+    char *current_fn = NULL;
     for (int i = 0; i < idx; ++i)
     {
-        printf("Main: %s\n", toss[i]->line);
+        if (current_fn == NULL || strcmp(current_fn, toss[i]->filename) != 0) {
+            printf("\n%s\n", toss[i]->filename);
+            current_fn = toss[i]->filename;
+        }
+        printf("%s\n", toss[i]->line);
     }
     free(toss);
     return 0;
