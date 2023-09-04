@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "journal/journal.h"
@@ -13,7 +12,7 @@ int main(int argc, char *argv[])
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "python");
+    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "vim");
     char *current_fn = NULL;
     for (int i = 0; i < idx; ++i)
     {
@@ -23,6 +22,5 @@ int main(int argc, char *argv[])
         }
         printf("%s\n", toss[i]->line);
     }
-    free(toss);
     return 0;
 }
