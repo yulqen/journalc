@@ -16,11 +16,9 @@ int main(int argc, char *argv[])
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "Boris");
+    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, "python");
     for (int i = 0; i < idx; ++i)
     {
-        /* FIXME: need to print the file header, then iterate through all the lines....*/
-//        printf("Received file: %s\n", toss[i]->filename);
         printf("Main: %s\n", toss[i]->line);
     }
     free(toss);

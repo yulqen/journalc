@@ -155,7 +155,6 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
     if (*idx == capacity)
     {
         capacity = (int)(capacity * 1.5);
-        printf("Expanding array to %d\n", capacity);
         JournalLine **new_array = realloc(jl_array, capacity * sizeof(char *));
         if (new_array == NULL)
         {
@@ -186,7 +185,6 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         if (ptr)
         {
             JournalLine *jl = journalline_create(line, fullpath);
-            printf("TEXTFILE: %s\n", line, fullpath);
             jl_array[*idx] = jl;
             (*idx)++;
 

@@ -41,7 +41,6 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK)
     {
         const char *filename = archive_entry_pathname(entry);
-        //        printf("Currently reading: %s, iteration %d\n", filename, ++count);
         if (filename)
         {
             // Perform any necessary checks here
@@ -54,12 +53,9 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                 size_t bytesRead;
                 while ((bytesRead = archive_read_data(a, buffer, bufferSize)) > 0)
                 {
-
-                    write_log("idx is %d and capacity is %d\n", *idx, capacity);
                     if (*idx == capacity)
                     {
                         capacity = (int)(capacity * 1.5);
-                        write_log("Expanding array to %d\n", capacity);
                         JournalLine **new_array = realloc(jls, capacity * sizeof(char *));
                         if (new_array == NULL)
                         {
@@ -71,25 +67,16 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                         }
                     }
 
-
-                    //                    printf("Bytes read: %zu ", bytesRead);
                     const char *delim = "\n";
                     char *saveptr = NULL;
                     char *line = strtok_r(buffer, delim, &saveptr);
                     while (line != NULL)
                     {
-                        //                        printf("idx outside of adding to array: %d\n",
-                        //                        *idx); printf("%s\n", line);
                         char *ptr = strstr(line, search_term);
                         if (ptr)
                         {
                             JournalLine *jl = journalline_create(line, filename);
-                            //                            printf("Adding %s to the array from %s\n",
-                            //                            line,
-                            //                                   archive_entry_pathname(entry));
-                            printf("ARCHIVE: %s\n", line);  // DEBUG line
                             jls[*idx] = jl;
-                            write_log("When adding to jl in ARCHIVE, idx is %d", *idx);
                             (*idx)++;
                         }
                         line = strtok_r(NULL, delim, &saveptr);
