@@ -16,8 +16,7 @@ struct archive *prepare_archive()
     return a;
 }
 
-JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int capacity,
-                         JournalLine **jls)
+JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int capacity, JournalLine **jls)
 {
     struct archive *a = prepare_archive();
     int r = archive_read_open_filename(a, filepath, 10242);
@@ -31,8 +30,7 @@ JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath
     archive_read_free(a);
     return jls;
 }
-JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term,
-                                 int capacity, int *idx)
+JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int capacity, int *idx)
 {
     struct archive_entry *entry;
 
@@ -55,16 +53,7 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                 {
                     if (*idx == capacity)
                     {
-                        capacity = (int)(capacity * 1.5);
-                        JournalLine **new_array = realloc(jls, capacity * sizeof(char *));
-                        if (new_array == NULL)
-                        {
-                            perror("Something went wrong with the realloc.\n");
-                            exit(1);
-                        } else
-                        {
-                            jls = new_array;
-                        }
+                        journalline_array_reallocate(idx, &capacity, &jls);
                     }
 
                     const char *delim = "\n";

@@ -2,11 +2,11 @@
 
 #include <assert.h>
 #include <dirent.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <stdarg.h>
 #include <time.h>
 
 Options opts;
@@ -15,7 +15,8 @@ void write_log(const char *format, ...)
 {
     va_list args;
     FILE *file = fopen("log.txt", "a");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Error opening file.");
         return;
     }
@@ -23,7 +24,7 @@ void write_log(const char *format, ...)
     // Get current time
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    fprintf(file,"%02d:%02d:%02d: ", tm.tm_hour, tm.tm_min, tm.tm_sec);
+    fprintf(file, "%02d:%02d:%02d: ", tm.tm_hour, tm.tm_min, tm.tm_sec);
 
     va_start(args, format);
     vfprintf(file, format, args);
@@ -51,8 +52,7 @@ JournalLine *journalline_create(char *line, const char *filename)
     }
     strcpy(jl->line, line);  // Copy the content of the input line
 
-    jl->filename =
-        malloc(strlen(filename) + 1);  // Allocate memory for the string and the null-terminator
+    jl->filename = malloc(strlen(filename) + 1);  // Allocate memory for the string and the null-terminator
     if (jl->filename == NULL)
     {
         free(jl->line);
@@ -95,8 +95,7 @@ void ParseArgs(int argc, char *const *argv)
     }
 }
 
-JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs,
-                                                     char *search_term)
+JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs, char *search_term)
 {
     assert(*idx == 0);
     DIR *journal_dir;
@@ -104,7 +103,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     struct stat file_stat;
     char fullpath[256];
     int capacity = 20;
-    JournalLine **jl_array = malloc(capacity * sizeof(JournalLine *));
+    JournalLine **jls = malloc(capacity * sizeof(JournalLine *));
 
     for (size_t i = 0; i < dir_count; i++)
     {
@@ -131,12 +130,12 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                     // If it is a normal text file (md or text)
                     if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                     {
-                        jl_array = text_file_search(idx, search_term, fullpath, capacity, jl_array);
+                        jls = text_file_search(idx, search_term, fullpath, capacity, jls);
 
                         // Or a tgz file
                     } else if ((strcmp(tgz_ext, ".tgz") == 0))
                     {
-                        jl_array = tgz_search(idx, search_term, fullpath, capacity, jl_array);
+                        jls = tgz_search(idx, search_term, fullpath, capacity, jls);
                     }
                 }
             }
@@ -147,23 +146,13 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
             printf("Unable to close directory");
         }
     }
-    return jl_array;
+    return jls;
 }
-JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath,
-                               int capacity, JournalLine **jls)
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity, JournalLine **jls)
 {
     if (*idx == capacity)
     {
-        capacity = (int)(capacity * 1.5);
-        JournalLine **new_array = realloc(jls, capacity * sizeof(char *));
-        if (new_array == NULL)
-        {
-            perror("Something went wrong with the realloc.\n");
-            exit(1);
-        } else
-        {
-            jls = new_array;
-        }
+        journalline_array_reallocate(idx, &capacity, &jls);
     }
 
     // TODO: Here is where we need to parse the file
@@ -208,6 +197,23 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
     free(line);
     fclose(file);
     return jls;
+}
+
+void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
+{
+    if (*idx == (*capacity))
+    {
+        (*capacity) = (int)((*capacity) * 1.5);
+        JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(char *));
+        if (new_array == NULL)
+        {
+            perror("Something went wrong with the realloc.\n");
+            exit(1);
+        } else
+        {
+            (*jls) = new_array;
+        }
+    }
 }
 
 // Free memory function

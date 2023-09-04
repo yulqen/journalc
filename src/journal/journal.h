@@ -9,17 +9,27 @@ void write_log(const char *format, ...);
 void ParseArgs(int argc, char *const *argv);
 
 /* Storage for program options */
-typedef struct { char *search_term; } Options;
+typedef struct
+{
+    char *search_term;
+} Options;
 
 /* Storage for text extracted from a line in a target file */
-typedef struct{ char *line; char *filename; } JournalLine;
+typedef struct
+{
+    char *line;
+    char *filename;
+} JournalLine;
+
+// Allocates more memory for the array of JournalLine objects, jls.
+void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls);
 
 /* tgz handling */
 struct archive *prepare_archive();
 
 // Search through md and txt files
-JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath,
-                               int capacity, JournalLine **jls);
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity,
+                               JournalLine **jls);
 
 /* Given a suitably prepared archive (see prepare_archive()) and an array of JournalLine structs, will
  * search for search_term in filepath. Also requires to be passed a pointer to an active counter, idx.
@@ -40,8 +50,7 @@ void journalline_destroy(JournalLine *jl);
 JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs, char *search_term);
 
 /* ------------ Legacy functions ------------------------------ */
-int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line,
-                                       const char *filename);
+int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line, const char *filename);
 char **GetRelevantFiles(int *counter);
 void GetAllRelevantFiles();
 void GetLineFromFile(char *filepath);
