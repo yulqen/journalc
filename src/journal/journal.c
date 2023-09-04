@@ -56,9 +56,14 @@ void write_log(const char *format, ...)
 void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
 {
     if (*idx == (*capacity))
-    {
-        (*capacity) = (int)((*capacity) * 1.5);
-        JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(char *));
+    {  // Chat GPT commennt: adding one here Also, although not directly causing your problem, in your re-allocation function I notice
+        // you're enlarging the capacity by a factor of 1.5 each time it's called. This approach (also known as
+        // geometric expansion) is very common in dynamic array operations to get an amortized linear complexity.
+        // However, casting float to int might cause trouble sometimes as it truncates the decimal part which can result
+        // in unchanged capacity when the capacity is very small. To get this right, the new capacity should be
+        // calculated as:
+        (*capacity) = (int)((*capacity) * 1.5) + 1;
+        JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(JournalLine *));
         if (new_array == NULL)
         {
             perror("Something went wrong with the realloc.\n");
@@ -70,7 +75,7 @@ void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***
     }
 }
 
-void journallist_destroy(JournalLine *jl)
+void journalline_destroy(JournalLine *jl)
 {
     if (jl != NULL)
     {
@@ -167,7 +172,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
 
 JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity, JournalLine **jls)
 {
-
     // TODO: Here is where we need to parse the file
     FILE *file = fopen(fullpath, "r");
     if (file == NULL)
@@ -199,43 +203,4 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
     free(line);
     fclose(file);
     return jls;
-}
-
-void string_array_free(char **string_array, int linesize)
-{
-    for (int i = 0; i < linesize; i++)
-    {
-        free(string_array[i]);
-    }
-    free(string_array);
-}
-
-int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line, const char *filename)
-{
-    JournalLine newLine;
-    newLine.line = strdup(line);
-    if (newLine.line == NULL)
-    {
-        perror("Memory allocation error on adding line.");
-        return 1;
-    }
-
-    newLine.filename = strdup(filename);
-    if (newLine.filename == NULL)
-    {
-        perror("Memory allocation error on adding filename.");
-        return 1;
-    }
-    *lines = realloc(*lines, (*lineCount + 1) * sizeof(JournalLine));
-    if (*lines == NULL)
-    {
-        free(newLine.line);
-        free(newLine.filename);
-        perror("Memory allocation error.");
-        return 1;
-    }
-
-    (*lines)[*lineCount] = newLine;
-    (*lineCount)++;
-    return 0;
 }

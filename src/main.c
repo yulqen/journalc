@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
             current_fn = toss[i]->filename;
         }
         printf("%s\n", toss[i]->line);
+        journalline_destroy(toss[i]);
     }
     return 0;
 }

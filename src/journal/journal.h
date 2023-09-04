@@ -49,10 +49,4 @@ void journalline_destroy(JournalLine *jl);
 // the search term. Requires the number of directories to be searched - dir_count.
 JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs, char *search_term);
 
-/* ------------ Legacy functions ------------------------------ */
-int JournalLinePopulate(JournalLine **lines, int *lineCount, const char *line, const char *filename);
-char **GetRelevantFiles(int *counter);
-void GetAllRelevantFiles();
-void GetLineFromFile(char *filepath);
-
 #endif

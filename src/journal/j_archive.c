@@ -3,7 +3,6 @@
 //
 #include <archive.h>
 #include <archive_entry.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "journal.h"
