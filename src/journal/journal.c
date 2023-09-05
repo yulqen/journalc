@@ -56,7 +56,8 @@ void write_log(const char *format, ...)
 void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
 {
     if (*idx == (*capacity))
-    {  // Chat GPT commennt: adding one here Also, although not directly causing your problem, in your re-allocation function I notice
+    {  // Chat GPT commennt: adding one here Also, although not directly causing your problem, in your re-allocation
+       // function I notice
         // you're enlarging the capacity by a factor of 1.5 each time it's called. This approach (also known as
         // geometric expansion) is very common in dynamic array operations to get an amortized linear complexity.
         // However, casting float to int might cause trouble sometimes as it truncates the decimal part which can result
@@ -140,25 +141,22 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
             strcpy(fullpath, target_dirs[i]);
             strcat(fullpath, "/");
             strcat(fullpath, dir_information->d_name);
-            if (!stat(fullpath, &file_stat))
+            if (dir_information->d_type == DT_REG) /* if the entry is a regular file */
             {
-                if (!S_ISDIR(file_stat.st_mode))
+                size_t length = strlen(fullpath);
+                const char *m_ext = fullpath + length - 3;
+                const char *t_ext = fullpath + length - 4;
+                const char *tgz_ext = fullpath + length - 4;
+
+                // If it is a normal text file (md or text)
+                if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                 {
-                    size_t length = strlen(fullpath);
-                    const char *m_ext = fullpath + length - 3;
-                    const char *t_ext = fullpath + length - 4;
-                    const char *tgz_ext = fullpath + length - 4;
+                    jls = text_file_search(idx, search_term, fullpath, capacity, jls);
 
-                    // If it is a normal text file (md or text)
-                    if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
-                    {
-                        jls = text_file_search(idx, search_term, fullpath, capacity, jls);
-
-                        // Or a tgz file
-                    } else if ((strcmp(tgz_ext, ".tgz") == 0))
-                    {
-                        jls = tgz_search(idx, search_term, fullpath, capacity, jls);
-                    }
+                    // Or a tgz file
+                } else if ((strcmp(tgz_ext, ".tgz") == 0))
+                {
+                    jls = tgz_search(idx, search_term, fullpath, capacity, jls);
                 }
             }
         }
