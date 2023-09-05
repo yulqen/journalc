@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    char *search_term = "zettle";
+    char *search_term = "eggs";
     JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
     char *current_fn = NULL;
     for (int i = 0; i < idx; ++i)
@@ -25,7 +25,9 @@ int main(int argc, char *argv[])
             printf("\n%s\n", toss[i]->filename);
             current_fn = toss[i]->filename;
         }
-        printf("%s\n", highlight_search_term(toss[i]->line, search_term));
+        char *hline = highlight_search_term(toss[i]->line, search_term);
+        printf("%s\n", hline);
+        free(hline);
     }
     for (int i = 0; i < idx; ++i)
     {

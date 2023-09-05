@@ -9,6 +9,7 @@
 #include <time.h>
 
 #define MAX_BUFF_SIZE 512
+#define CAPACITY 50000
 
 Options opts;
 
@@ -151,7 +152,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     assert(*idx == 0);
     DIR *dir;
     struct dirent *dir_information;
-    int capacity = 20;
+    int capacity = CAPACITY;
     JournalLine **jls = malloc(capacity * sizeof(JournalLine *));
     if (jls == NULL)
     {
