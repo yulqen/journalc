@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    char *search_term = "eggs";
+    char *search_term = "rwxrob";
     JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
     char *current_fn = NULL;
     for (int i = 0; i < idx; ++i)

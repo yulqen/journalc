@@ -186,6 +186,11 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                 // If it is a normal text file (md or text)
                 if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                 {
+                    /* FIXME - the problem with memory might be because we are passing in capacity here
+                     * as does the tgz_search function below. And we set it to a massive number like we're
+                     * doing, it never has to change. Probably. As this is called first, it should probably
+                     * take capacity as a pointer so that the tgz_search function can use the updated value.
+                     */
                     jls = text_file_search(idx, search_term, fullpath, capacity, jls);
 
                     // Or a tgz file
