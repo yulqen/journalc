@@ -138,11 +138,12 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
         while ((dir_information = readdir(journal_dir)) != 0)
         {
             char fullpath[256];
-            strcpy(fullpath, target_dirs[i]);
-            strcat(fullpath, "/");
-            strcat(fullpath, dir_information->d_name);
-            if (dir_information->d_type == DT_REG) /* if the entry is a regular file */
+            /* if the entry is a regular file */
+            if (dir_information->d_type == DT_REG)
             {
+                strcpy(fullpath, target_dirs[i]);
+                strcat(fullpath, "/");
+                strcat(fullpath, dir_information->d_name);
                 size_t length = strlen(fullpath);
                 const char *m_ext = fullpath + length - 3;
                 const char *t_ext = fullpath + length - 4;
