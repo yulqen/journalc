@@ -121,7 +121,7 @@ JournalLine *journalline_create(char *line, const char *filename)
 JournalLine **journal_search_directories_search_term(int *idx, int dir_count, char **target_dirs, char *search_term)
 {
     assert(*idx == 0);
-    DIR *journal_dir;
+    DIR *dir;
     struct dirent *dir_information;
     struct stat file_stat;
     int capacity = 20;
@@ -129,13 +129,13 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
 
     for (size_t i = 0; i < dir_count; i++)
     {
-        if ((journal_dir = opendir(target_dirs[i])) == NULL)
+        if ((dir = opendir(target_dirs[i])) == NULL)
         {
             perror("Error opening directory.");
             exit(1);
         }
 
-        while ((dir_information = readdir(journal_dir)) != 0)
+        while ((dir_information = readdir(dir)) != 0)
         {
             char fullpath[256];
             /* if the entry is a regular file */
@@ -162,6 +162,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
             }
         }
     }
+    free(dir);
     return jls;
 }
 
@@ -173,10 +174,6 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
     {
         perror("Error opening file.");
     }
-
-    char buf[2000];  // Assuming that we don't get many lines longer than 2000
-                     // characters
-
     size_t size = 2048;
     char *line = malloc(size);
 
@@ -190,8 +187,11 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
                 journalline_array_reallocate(idx, &capacity, &jls);
             }
             JournalLine *jl = journalline_create(line, fullpath);
-            jls[*idx] = jl;
-            (*idx)++;
+            if (jl != NULL)
+            {
+                jls[*idx] = jl;
+                (*idx)++;
+            }
         }
     }
 
