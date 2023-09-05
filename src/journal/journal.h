@@ -31,16 +31,16 @@ void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***
 struct archive *prepare_archive();
 
 // Search through md and txt files
-JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity,
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int *capacity,
                                JournalLine **jls);
 
 /* Given a suitably prepared archive (see prepare_archive()) and an array of JournalLine structs, will
  * search for search_term in filepath. Also requires to be passed a pointer to an active counter, idx.
  * */
-JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int capacity, JournalLine **jls);
+JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int *capacity, JournalLine **jls);
 
 /* An internal function called from tgz_search to do the actual finding. */
-JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int capacity, int *idx);
+JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int *capacity, int *idx);
 
 // Create a JournalLine object.
 JournalLine *journalline_create(char *line, const char *filename);

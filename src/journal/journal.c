@@ -9,7 +9,7 @@
 #include <time.h>
 
 #define MAX_BUFF_SIZE 512
-#define CAPACITY 50000
+#define CAPACITY 20
 
 Options opts;
 
@@ -165,8 +165,9 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     {
         if ((dir = opendir(target_dirs[i])) == NULL)
         {
+            closedir(dir);
             perror("Error opening directory.");
-            exit(1);
+
         }
 
         while ((dir_information = readdir(dir)) != 0)
@@ -186,17 +187,12 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                 // If it is a normal text file (md or text)
                 if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
                 {
-                    /* FIXME - the problem with memory might be because we are passing in capacity here
-                     * as does the tgz_search function below. And we set it to a massive number like we're
-                     * doing, it never has to change. Probably. As this is called first, it should probably
-                     * take capacity as a pointer so that the tgz_search function can use the updated value.
-                     */
-                    jls = text_file_search(idx, search_term, fullpath, capacity, jls);
+                    jls = text_file_search(idx, search_term, fullpath, &capacity, jls);
 
                     // Or a tgz file
                 } else if ((strcmp(tgz_ext, ".tgz") == 0))
                 {
-                    jls = tgz_search(idx, search_term, fullpath, capacity, jls);
+                    jls = tgz_search(idx, search_term, fullpath, &capacity, jls);
                 }
             }
         }
@@ -205,7 +201,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     return jls;
 }
 
-JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int capacity, JournalLine **jls)
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int *capacity, JournalLine **jls)
 {
     // TODO: Here is where we need to parse the file
     FILE *file = fopen(fullpath, "r");
@@ -221,9 +217,9 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         char *ptr = strstr(line, search_term);
         if (ptr)
         {
-            if (*idx == capacity - 1)
+            if (*idx == *capacity - 1)
             {
-                journalline_array_reallocate(idx, &capacity, &jls);
+                journalline_array_reallocate(idx, capacity, &jls);
             }
             JournalLine *jl = journalline_create(line, fullpath);
             if (jl != NULL)

@@ -16,7 +16,7 @@ struct archive *prepare_archive()
     return a;
 }
 
-JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int capacity, JournalLine **jls)
+JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath, int *capacity, JournalLine **jls)
 {
     struct archive *a = prepare_archive();
     int r = archive_read_open_filename(a, filepath, 10242);
@@ -30,7 +30,7 @@ JournalLine **tgz_search(int *idx, const char *search_term, const char *filepath
     archive_read_free(a);
     return jls;
 }
-JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int capacity, int *idx)
+JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const char *search_term, int *capacity, int *idx)
 {
     struct archive_entry *entry;
 
