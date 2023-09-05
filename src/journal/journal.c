@@ -166,8 +166,8 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     {
         if ((dir = opendir(target_dirs[i])) == NULL)
         {
-            closedir(dir);
             perror("Error opening directory.");
+            continue;
         }
 
         while ((dir_information = readdir(dir)) != 0)
@@ -196,8 +196,8 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                 }
             }
         }
+        closedir(dir);
     }
-    closedir(dir);
     return jls;
 }
 

@@ -47,11 +47,12 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                 char buffer[bufferSize];
 
                 size_t bytesRead;
-                while ((bytesRead = archive_read_data(a, buffer, bufferSize)) > 0)
+                while ((bytesRead = archive_read_data(a, buffer, bufferSize - 1)) > 0)
                 {
+                    buffer[bytesRead] = '\0';
 
                     const char *delim = "\n";
-                    char *saveptr = "";
+                    char *saveptr = NULL;
                     char *line = strtok_r(buffer, delim, &saveptr);
                     while (line != NULL)
                     {
