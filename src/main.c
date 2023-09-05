@@ -36,6 +36,6 @@ int main(int argc, char *argv[])
         free(toss[i]->filename);
         free(toss[i]);
     }
-//        free(toss);
+        free(toss);
     return 0;
 }

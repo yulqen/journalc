@@ -21,7 +21,7 @@ Options opts;
 
 char *highlight_search_term(char *s, char *target)
 {
-    char *out = malloc(MAX_BUFF_SIZE * 3 * sizeof(char));
+    char *out = calloc(MAX_BUFF_SIZE, MAX_BUFF_SIZE * 3 * sizeof(char));
     char before_target[MAX_BUFF_SIZE] = {0};
     char found_target[MAX_BUFF_SIZE] = {0};
     char after_target[MAX_BUFF_SIZE] = {0};
