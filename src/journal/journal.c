@@ -21,7 +21,7 @@ Options opts;
 
 char *highlight_search_term(char *s, char *target)
 {
-    char *out = malloc(MAX_BUFF_SIZE*3 * sizeof(char));
+    char *out = malloc(MAX_BUFF_SIZE * 3 * sizeof(char));
     char before_target[MAX_BUFF_SIZE] = {0};
     char found_target[MAX_BUFF_SIZE] = {0};
     char after_target[MAX_BUFF_SIZE] = {0};
@@ -31,10 +31,11 @@ char *highlight_search_term(char *s, char *target)
         strncpy(before_target, s, t - s);
         strncpy(found_target, t, strlen(target));
         strncpy(after_target, t + strlen(target), MAX_BUFF_SIZE - strlen(target));
-        snprintf(out, sizeof(out) * MAX_BUFF_SIZE, "%s\x1B[33;1;4m%s\x1B[0m%s",
-                 before_target, found_target, after_target);
+        snprintf(out, sizeof(out) * MAX_BUFF_SIZE, "%s\x1B[33;1;4m%s\x1B[0m%s", before_target, found_target,
+                 after_target);
 
-    } else {
+    } else
+    {
         printf("Not found\n");
     }
     return out;
@@ -153,7 +154,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     DIR *dir;
     struct dirent *dir_information;
     int capacity = CAPACITY;
-    JournalLine **jls = malloc(capacity * sizeof(JournalLine *));
+    JournalLine **jls = calloc(capacity, capacity * sizeof(JournalLine *));
     if (jls == NULL)
     {
         char *e = NULL;
@@ -167,7 +168,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
         {
             closedir(dir);
             perror("Error opening directory.");
-
         }
 
         while ((dir_information = readdir(dir)) != 0)
@@ -201,7 +201,8 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     return jls;
 }
 
-JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int *capacity, JournalLine **jls)
+JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int *capacity,
+                               JournalLine **jls)
 {
     // TODO: Here is where we need to parse the file
     FILE *file = fopen(fullpath, "r");
@@ -222,11 +223,8 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
                 journalline_array_reallocate(idx, capacity, &jls);
             }
             JournalLine *jl = journalline_create(line, fullpath);
-            if (jl != NULL)
-            {
-                jls[*idx] = jl;
-                (*idx)++;
-            }
+            jls[*idx] = jl;
+            (*idx)++;
         }
     }
 

@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
 
     int idx = 0;
     char *search_term = "Joanna";
-    JournalLine **toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
+    JournalLine **toss = NULL;
+    toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
     char *current_fn = NULL;
     for (int i = 0; i < idx; ++i)
     {
