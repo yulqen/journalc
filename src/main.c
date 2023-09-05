@@ -24,11 +24,11 @@ int main(int argc, char *argv[])
         }
         printf("%s\n", toss[i]->line);
     }
-//    for (int i = 0; i < idx; ++i) {
-//        free(toss[i]->line);
-//        free(toss[i]->filename);
-//        free(toss[i]);
-//    }
-    free(toss);
+    for (int i = 0; i < idx; ++i) {
+        free(toss[i]->line);
+        free(toss[i]->filename);
+        free(toss[i]);
+    }
+//    free(toss);
     return 0;
 }

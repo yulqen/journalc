@@ -123,7 +123,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     DIR *journal_dir;
     struct dirent *dir_information;
     struct stat file_stat;
-    char fullpath[256];
     int capacity = 20;
     JournalLine **jls = malloc(capacity * sizeof(JournalLine *));
 
@@ -137,6 +136,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
 
         while ((dir_information = readdir(journal_dir)) != 0)
         {
+            char fullpath[256];
             strcpy(fullpath, target_dirs[i]);
             strcat(fullpath, "/");
             strcat(fullpath, dir_information->d_name);
@@ -163,10 +163,10 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
             }
         }
 
-        if ((closedir(journal_dir) != 0))
-        {
-            printf("Unable to close directory");
-        }
+        //        if ((closedir(journal_dir) != 0))
+//        {
+//            printf("Unable to close directory");
+//        }
     }
     return jls;
 }
@@ -191,7 +191,7 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         char *ptr = strstr(line, search_term);
         if (ptr)
         {
-            if (*idx == capacity)
+            if (*idx == capacity - 1)
             {
                 journalline_array_reallocate(idx, &capacity, &jls);
             }

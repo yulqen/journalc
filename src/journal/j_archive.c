@@ -4,6 +4,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "journal.h"
 
@@ -52,14 +53,14 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                 {
 
                     const char *delim = "\n";
-                    char *saveptr = NULL;
+                    char *saveptr = "";
                     char *line = strtok_r(buffer, delim, &saveptr);
                     while (line != NULL)
                     {
                         char *ptr = strstr(line, search_term);
                         if (ptr)
                         {
-                            if (*idx == capacity)
+                            if (*idx == capacity - 1)
                             {
                                 journalline_array_reallocate(idx, &capacity, &jls);
                             }
