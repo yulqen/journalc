@@ -162,11 +162,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                 }
             }
         }
-
-        //        if ((closedir(journal_dir) != 0))
-//        {
-//            printf("Unable to close directory");
-//        }
     }
     return jls;
 }
