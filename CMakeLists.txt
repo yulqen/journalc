@@ -6,5 +6,7 @@ project(journalc
 
 set(CMAKE_C_STANDARD 11)
 
+add_compile_options(-Wall -Wextra)
+
 add_subdirectory(src)
 

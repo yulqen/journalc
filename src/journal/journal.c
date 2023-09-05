@@ -123,7 +123,6 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     assert(*idx == 0);
     DIR *dir;
     struct dirent *dir_information;
-    struct stat file_stat;
     int capacity = 20;
     JournalLine **jls = malloc(capacity * sizeof(JournalLine *));
     if (jls == NULL)
@@ -133,7 +132,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
         perror(e);
     }
 
-    for (size_t i = 0; i < dir_count; i++)
+    for (int i = 0; i < dir_count; i++)
     {
         if ((dir = opendir(target_dirs[i])) == NULL)
         {
