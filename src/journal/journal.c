@@ -9,7 +9,7 @@
 #include <time.h>
 
 #define MAX_BUFF_SIZE 512
-#define CAPACITY 20
+#define CAPACITY 100
 
 Options opts;
 
