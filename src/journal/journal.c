@@ -126,6 +126,12 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
     struct stat file_stat;
     int capacity = 20;
     JournalLine **jls = malloc(capacity * sizeof(JournalLine *));
+    if (jls == NULL)
+    {
+        char *e = NULL;
+        sprintf(e, "Unable to allocate memory for array of jls in %s at %d", __FILE__, __LINE__);
+        perror(e);
+    }
 
     for (size_t i = 0; i < dir_count; i++)
     {
@@ -162,7 +168,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
             }
         }
     }
-    free(dir);
+    closedir(dir);
     return jls;
 }
 
@@ -175,7 +181,7 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         perror("Error opening file.");
     }
     size_t size = 2048;
-    char *line = malloc(size);
+    char *line = malloc(size * sizeof(char *));
 
     while (getline(&line, &size, file) != -1)
     {
