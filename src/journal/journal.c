@@ -8,7 +8,36 @@
 #include <string.h>
 #include <time.h>
 
+#define MAX_BUFF_SIZE 512
+
 Options opts;
+
+/*
+ *  const String kANSIReset = "\033[0m";
+ *  const String kANSIYellowUnderline = "\033[33;1;4m";
+ *
+ */
+
+char *highlight_search_term(char *s, char *target)
+{
+    char *out = malloc(MAX_BUFF_SIZE*3 * sizeof(char));
+    char before_target[MAX_BUFF_SIZE] = {0};
+    char found_target[MAX_BUFF_SIZE] = {0};
+    char after_target[MAX_BUFF_SIZE] = {0};
+    char *t = strstr(s, target);
+    if (t && strlen(target) < MAX_BUFF_SIZE)
+    {
+        strncpy(before_target, s, t - s);
+        strncpy(found_target, t, strlen(target));
+        strncpy(after_target, t + strlen(target), MAX_BUFF_SIZE - strlen(target));
+        snprintf(out, sizeof(out) * MAX_BUFF_SIZE, "%s\x1B[33;1;4m%s\x1B[0m%s",
+                 before_target, found_target, after_target);
+
+    } else {
+        printf("Not found\n");
+    }
+    return out;
+}
 
 void ParseArgs(int argc, char *const *argv)
 {

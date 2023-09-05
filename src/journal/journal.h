@@ -2,6 +2,9 @@
 #define JOURNAL_H
 #include <archive.h>
 
+
+char *highlight_search_term(char *s, char *target);
+
 // logging function
 void write_log(const char *format, ...);
 
