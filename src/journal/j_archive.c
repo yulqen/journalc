@@ -34,8 +34,6 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
 {
     struct archive_entry *entry;
 
-    int count = 0;
-
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK)
     {
         const char *filename = archive_entry_pathname(entry);
