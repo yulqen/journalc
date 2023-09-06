@@ -216,8 +216,10 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
         char *ptr = strstr(line, search_term);
         if (ptr)
         {
+            printf("idx is: %d cap: %d\n", *idx, *capacity);
             if (*idx == *capacity - 1)
             {
+                printf("Reallocating\n");
                 journalline_array_reallocate(idx, capacity, &jls);
             }
             JournalLine *jl = journalline_create(line, fullpath);
