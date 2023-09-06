@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "date.h"
 
-char *today_date_basic_iso_format()
+char *today_date_basic_iso_format(void)
 {
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);

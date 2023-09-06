@@ -4,11 +4,10 @@
 #include <archive.h>
 #include <archive_entry.h>
 #include <string.h>
-#include <stdlib.h>
 
 #include "journal.h"
 
-struct archive *prepare_archive()
+struct archive *prepare_archive(void)
 {
     struct archive *a = archive_read_new();
     archive_read_support_filter_gzip(a);
@@ -59,9 +58,9 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                         char *ptr = strstr(line, search_term);
                         if (ptr)
                         {
-                            if (*idx == capacity - 1)
+                            if (*idx == *capacity - 1)
                             {
-                                journalline_array_reallocate(idx, &capacity, &jls);
+                                journalline_array_reallocate(idx, capacity, &jls);
                             }
                             JournalLine *jl = journalline_create(line, filename);
                             jls[*idx] = jl;

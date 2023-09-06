@@ -86,7 +86,7 @@ void write_log(const char *format, ...)
 void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
 {
     if (*idx == (*capacity))
-    {  // ChatGPT commennt: adding one here Also, although not directly causing your problem, in your re-allocation
+    {  // ChatGPT comment: adding one here Also, although not directly causing your problem, in your re-allocation
        // function I notice
         // you're enlarging the capacity by a factor of 1.5 each time it's called. This approach (also known as
         // geometric expansion) is very common in dynamic array operations to get an amortized linear complexity.

@@ -3,6 +3,7 @@
 #include <archive.h>
 
 
+
 char *highlight_search_term(char *s, char *target);
 
 // logging function
@@ -28,7 +29,7 @@ typedef struct
 void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls);
 
 /* tgz handling */
-struct archive *prepare_archive();
+struct archive *prepare_archive(void);
 
 // Search through md and txt files
 JournalLine **text_file_search(int *idx, const char *search_term, const char *fullpath, int *capacity,
