@@ -9,7 +9,7 @@
 #include <time.h>
 
 #define MAX_BUFF_SIZE 512
-#define CAPACITY 100
+#define CAPACITY 10
 
 Options opts;
 
@@ -85,24 +85,22 @@ void write_log(const char *format, ...)
 
 void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
 {
-    if (*idx == (*capacity))
-    {  // ChatGPT comment: adding one here Also, although not directly causing your problem, in your re-allocation
-       // function I notice
-        // you're enlarging the capacity by a factor of 1.5 each time it's called. This approach (also known as
-        // geometric expansion) is very common in dynamic array operations to get an amortized linear complexity.
-        // However, casting float to int might cause trouble sometimes as it truncates the decimal part which can result
-        // in unchanged capacity when the capacity is very small. To get this right, the new capacity should be
-        // calculated as:
-        (*capacity) = (int)((*capacity) * 1.5) + 1;
-        JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(JournalLine *));
-        if (new_array == NULL)
-        {
-            perror("Something went wrong with the realloc.\n");
-            exit(1);
-        } else
-        {
-            (*jls) = new_array;
-        }
+    // ChatGPT comment: adding one here Also, although not directly causing your problem, in your re-allocation
+    // function I notice
+    // you're enlarging the capacity by a factor of 1.5 each time it's called. This approach (also known as
+    // geometric expansion) is very common in dynamic array operations to get an amortized linear complexity.
+    // However, casting float to int might cause trouble sometimes as it truncates the decimal part which can result
+    // in unchanged capacity when the capacity is very small. To get this right, the new capacity should be
+    // calculated as:
+    (*capacity) = (int)((*capacity) * 1.5) + 1;
+    JournalLine **new_array = realloc((*jls), (*capacity) * sizeof(JournalLine *));
+    if (new_array == NULL)
+    {
+        perror("Something went wrong with the realloc.\n");
+        exit(1);
+    } else
+    {
+        (*jls) = new_array;
     }
 }
 
