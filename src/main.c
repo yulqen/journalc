@@ -10,12 +10,13 @@ int main(int argc, char *argv[])
     //    printf("%s\n", highlight_search_term("longer is the night", "night"));
 
     char *dirs[] = {"/home/lemon/Documents/Notes/journal/home", "/home/lemon/Documents/Notes/MOD/work_journal",
-                    "/home/lemon/Documents/Notes/Archive", "/home/lemon/Documents/Notes/journal/archives"};
+                    //                    "/home/lemon/Documents/Notes/Archive",
+                    "/home/lemon/Documents/Notes/journal/archives"};
     // Calculate the size of the array of dicts
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    char *search_term = "tick";
+    char *search_term = "Michael";
     JournalLine **toss = NULL;
     toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
     char *current_fn = NULL;
@@ -36,6 +37,6 @@ int main(int argc, char *argv[])
         free(toss[i]->filename);
         free(toss[i]);
     }
-        free(toss);
+    free(toss);
     return 0;
 }
