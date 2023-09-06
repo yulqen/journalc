@@ -4,4 +4,4 @@
 " set noexpandtab
 " set colorcolumn=110
 " highlight ColorColumn ctermbg=236
-set makeprg=./build.sh\ &&\ ./build/journalc
+set makeprg=cmake\ --build\ cmake-build-debug
