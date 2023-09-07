@@ -41,21 +41,27 @@ char *highlight_search_term(char *s, char *target)
     return out;
 }
 
-void ParseArgs(int argc, char *const *argv)
+char *help =
+    "Usage: %s\n"
+    "Can do lots of stuff with journal files.\n"
+    "Including:\n"
+    "    -g|--grep [search_term]\n";
+
+void parse_args(int argc, char *const *argv, char **search_term)
 {
-    for (int i = 1; i < argc; i++)
+    if (argc != 3)
     {
+        fprintf(stderr, help, argv[0]);
+        exit(1);
+    } else
+    {
+        if ((strcmp(argv[1], "-g") == 0) || (strcmp(argv[1], "--grep") == 0))
         {
-            if (i < argc - 1)
-            {  // protection against segmentation fault
-                printf("Searching for (-g): %s\n", argv[i + 1]);
-                opts.search_term = argv[i + 1];
-            } else
-            {
-                printf("-g flag requires one argument\n");
-                return;
-            }
-            i++;  // skip next argument as it's already used as -g value
+            *search_term = malloc(strlen(argv[2]) * sizeof(char) + 1);
+            strcpy(*search_term, argv[2]);
+            printf("search_term is %s inside parse_args\n", *search_term);
+        } else {
+            fprintf(stderr, "We only accept either -g or --grep at this time.\n");
         }
     }
 }

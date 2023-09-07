@@ -4,10 +4,11 @@
 
 #include "journal/journal.h"
 
+
 int main(int argc, char *argv[])
 {
-    ParseArgs(argc, argv);
-    //    printf("%s\n", highlight_search_term("longer is the night", "night"));
+    char *search_term = NULL;
+    parse_args(argc, argv, &search_term);
 
     char *dirs[] = {"/home/lemon/Documents/Notes/journal/home", "/home/lemon/Documents/Notes/MOD/work_journal",
                     "/home/lemon/Documents/Notes/Archive", "/home/lemon/Documents/Notes/journal/archives"};
@@ -15,7 +16,6 @@ int main(int argc, char *argv[])
     int dir_count = sizeof dirs / sizeof dirs[0];
 
     int idx = 0;
-    char *search_term = "C++";
     JournalLine **toss = NULL;
     toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
     char *current_fn = NULL;
@@ -38,5 +38,6 @@ int main(int argc, char *argv[])
     }
     printf("\nFound \"%s\" %d times.", search_term, idx);
     free(toss);
+    free(search_term);
     return 0;
 }

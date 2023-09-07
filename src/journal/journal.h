@@ -10,7 +10,7 @@ char *highlight_search_term(char *s, char *target);
 void write_log(const char *format, ...);
 
 // Utility function
-void ParseArgs(int argc, char *const *argv);
+void parse_args(int argc, char *const *argv, char **search_term);
 
 /* Storage for program options */
 typedef struct
