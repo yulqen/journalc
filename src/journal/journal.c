@@ -31,10 +31,16 @@ char *highlight_search_term(char *s, char *target)
         if (strlen(s) > MAX_BUFF_SIZE)
         {
             fprintf(stderr, "\nThe string %s exceeds the maximum size allowed - not highlighting it.\n", s);
-            char *out_err = malloc(sizeof(s) + 1);
-            // TODO: We don't really need to use snprintf here...
-            snprintf(out_err, sizeof(out_err), "%s", s);
-            return out_err;
+            char *out_err = malloc(strlen(s) + 1);    //Use strlen instead of sizeof
+            if(out_err == NULL) {    //Check if memory allocation succeeded
+                fprintf(stderr, "\nMemory allocation failed\n");
+                return NULL;
+            }
+            else {
+                strcpy(out_err, s);    //Use strcpy instead of snprintf
+                free(out);
+                return out_err;
+            }
         }
 
         strncpy(before_target, s, t - s);
