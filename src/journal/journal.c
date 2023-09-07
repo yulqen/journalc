@@ -32,6 +32,7 @@ char *highlight_search_term(char *s, char *target)
         {
             fprintf(stderr, "\nThe string %s exceeds the maximum size allowed - not highlighting it.\n", s);
             char *out_err = malloc(sizeof(s) + 1);
+            // TODO: We don't really need to use snprintf here...
             snprintf(out_err, sizeof(out_err), "%s", s);
             return out_err;
         }
