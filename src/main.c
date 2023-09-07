@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         free(toss[i]->filename);
         free(toss[i]);
     }
-    printf("\nFound \"%s\" %d times.", search_term, idx);
+    printf("\nFound \"%s\" %d times.\n", search_term, idx);
     free(toss);
     free(search_term);
     return 0;

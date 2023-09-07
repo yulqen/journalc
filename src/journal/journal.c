@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_BUFF_SIZE 512
+#define MAX_BUFF_SIZE 2048
 #define CAPACITY 200
 
 Options opts;
@@ -28,6 +28,14 @@ char *highlight_search_term(char *s, char *target)
     char *t = strstr(s, target);
     if (t && strlen(target) < MAX_BUFF_SIZE)
     {
+        if (strlen(s) > MAX_BUFF_SIZE)
+        {
+            fprintf(stderr, "\nThe string %s exceeds the maximum size allowed - not highlighting it.\n", s);
+            char *out_err = malloc(sizeof(s) + 1);
+            snprintf(out_err, sizeof(out_err), "%s", s);
+            return out_err;
+        }
+
         strncpy(before_target, s, t - s);
         strncpy(found_target, t, strlen(target));
         strncpy(after_target, t + strlen(target), MAX_BUFF_SIZE - strlen(target));
