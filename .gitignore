@@ -16,3 +16,4 @@ _deps
 /.gdb_history
 .vs
 /cmake-build-release/
+/src/.gdb_history
