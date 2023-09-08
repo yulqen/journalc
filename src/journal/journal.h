@@ -26,7 +26,7 @@ typedef struct
 } JournalLine;
 
 // Allocates more memory for the array of JournalLine objects, jls.
-void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls);
+void journalline_array_reallocate(int *capacity, JournalLine ***jls);
 
 /* tgz handling */
 struct archive *prepare_archive(void);

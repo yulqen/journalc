@@ -104,7 +104,7 @@ void write_log(const char *format, ...)
     fclose(file);
 }
 
-void journalline_array_reallocate(const int *idx, int *capacity, JournalLine ***jls)
+void journalline_array_reallocate(int *capacity, JournalLine ***jls)
 {
     // ChatGPT comment: adding one here Also, although not directly causing your problem, in your re-allocation
     // function I notice
@@ -241,7 +241,7 @@ JournalLine **text_file_search(int *idx, const char *search_term, const char *fu
             if (*idx == *capacity - 1)
             {
                 printf("Reallocating\n");
-                journalline_array_reallocate(idx, capacity, &jls);
+                journalline_array_reallocate(capacity, &jls);
             }
             JournalLine *jl = journalline_create(line, fullpath);
             jls[*idx] = jl;

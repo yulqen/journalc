@@ -61,7 +61,7 @@ JournalLine **tgz_search_in_file(struct archive *a, JournalLine **jls, const cha
                             if (*idx == *capacity - 1)
                             {
                                 printf("Reallocating\n");
-                                journalline_array_reallocate(idx, capacity, &jls);
+                                journalline_array_reallocate(capacity, &jls);
                             }
                             JournalLine *jl = journalline_create(line, filename);
                             jls[*idx] = jl;
