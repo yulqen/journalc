@@ -31,13 +31,14 @@ char *highlight_search_term(char *s, char *target)
         if (strlen(s) > MAX_BUFF_SIZE)
         {
             fprintf(stderr, "\nThe string %s exceeds the maximum size allowed - not highlighting it.\n", s);
-            char *out_err = malloc(strlen(s) + 1);    //Use strlen instead of sizeof
-            if(out_err == NULL) {    //Check if memory allocation succeeded
+            char *out_err = malloc(strlen(s) + 1);  // Use strlen instead of sizeof
+            if (out_err == NULL)
+            {  // Check if memory allocation succeeded
                 fprintf(stderr, "\nMemory allocation failed\n");
                 return NULL;
-            }
-            else {
-                strcpy(out_err, s);    //Use strcpy instead of snprintf
+            } else
+            {
+                strcpy(out_err, s);  // Use strcpy instead of snprintf
                 free(out);
                 return out_err;
             }
@@ -75,7 +76,8 @@ void parse_args(int argc, char *const *argv, char **search_term)
             *search_term = malloc(strlen(argv[2]) * sizeof(char) + 1);
             strcpy(*search_term, argv[2]);
             printf("search_term is %s inside parse_args\n", *search_term);
-        } else {
+        } else
+        {
             fprintf(stderr, "We only accept either -g or --grep at this time.\n");
         }
     }
