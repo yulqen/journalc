@@ -204,7 +204,7 @@ JournalLine **journal_search_directories_search_term(int *idx, int dir_count, ch
                 const char *tgz_ext = fullpath + length - 4;
 
                 // If it is a normal text file (md or text)
-                if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0)
+                if (strcmp(m_ext, ".md") == 0 || strcmp(t_ext, ".txt") == 0 || strcmp(t_ext, ".org") == 0)
                 {
                     jls = text_file_search(idx, search_term, fullpath, &capacity, jls);
 

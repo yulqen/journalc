@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     parse_args(argc, argv, &search_term);
 
     char *dirs[] = {"/home/lemon/Documents/Notes/journal/home", "/home/lemon/Documents/Notes/MOD/work_journal",
-                    "/home/lemon/Documents/Notes/Archive", "/home/lemon/Documents/Notes/journal/archives"};
+                    "/home/lemon/Documents/Notes/Archive", "/home/lemon/Documents/Notes/journal/archives", "/home/lemon/Documents/org"};
     // Calculate the size of the array of dicts
     int dir_count = sizeof dirs / sizeof dirs[0];
 
