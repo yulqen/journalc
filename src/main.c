@@ -4,17 +4,16 @@
 
 #include "journal/journal.h"
 
-
 int main(int argc, char *argv[])
 {
     char *search_term = NULL;
     parse_args(argc, argv, &search_term);
 
     char *dirs[] = {"/home/lemon/Documents/Notes/journal/home", "/home/lemon/Documents/Notes/MOD/work_journal",
-                    "/home/lemon/Documents/Notes/Archive", "/home/lemon/Documents/Notes/journal/archives", "/home/lemon/Documents/org"};
+                    "/home/lemon/Documents/Notes/Archive", "/home/lemon/Documents/Notes/journal/archives",
+                    "/home/lemon/Documents/org"};
     // Calculate the size of the array of dicts
     int dir_count = sizeof dirs / sizeof dirs[0];
-
     int idx = 0;
     JournalLine **toss = NULL;
     toss = journal_search_directories_search_term(&idx, dir_count, dirs, search_term);
