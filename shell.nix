@@ -1,9 +1,11 @@
-let
-    pkgs = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-22.11.tar.gz") {};
-in pkgs.mkShell { 
-  buildInputs = [
-    pkgs.libarchive
-    pkgs.cmake
-    pkgs.clang
-  ];
+with import <nixpkgs> {};
+stdenv.mkDerivation {
+  name = "env";
+  nativeBuildInputs = [ cmake clang ];
+  buildInputs = [ libarchive ];
+
+  shellHook = ''
+    echo "We are now in a C development environment, with cmake and gcc, libarchive and gcc available."
+    echo "Use exit to enter and return to your normal environment."
+  '';
 }
