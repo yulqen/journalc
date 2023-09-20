@@ -1,7 +1,7 @@
 with import <nixpkgs> {};
 stdenv.mkDerivation {
   name = "env";
-  nativeBuildInputs = [ cmake clang ];
+  nativeBuildInputs = [ cmake clang-tools ];
   buildInputs = [ libarchive ];
 
   shellHook = ''
